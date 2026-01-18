@@ -15,8 +15,6 @@
 
     <script src="APIcaller.js" type="module"></script>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon.png">
-
     <link rel="stylesheet" href="dash-style.css">
     <!-- chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -193,17 +191,46 @@
 
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
     const imgProps = pdf.getImageProperties(imgData);
     const imgHeight = (pageWidth * imgProps.height) / imgProps.width;
 
     pdf.addImage(imgData, 'PNG', 0, 10, pageWidth, imgHeight);
+    // Add AI summary on new pages - properly split across multiple pages
     pdf.addPage();
-    pdf.setFontSize(14);
-    pdf.text("AI Generated Summary", 10, 20);
+    pdf.setFontSize(16);
+    pdf.setTextColor(40);
+    pdf.text("AI Generated Analysis Summary", 10, 20);
+    
+    // Split text and add across multiple pages
     pdf.setFontSize(11);
-    pdf.text(aiText, 10, 30, { maxWidth: 190 });
+    pdf.setTextColor(60);
+    
+    const splitText = pdf.splitTextToSize(aiText, 190);
+    const lineHeight = 7;
+    const pageHeight_content = pdf.internal.pageSize.getHeight();
+    const marginTop = 30;
+    const marginBottom = 10;
+    const availableHeight = pageHeight_content - marginTop - marginBottom;
+    const maxLinesPerPage = Math.floor(availableHeight / lineHeight);
+    
+    let currentLine = 0;
+    let yPosition = marginTop;
+    
+    for (let i = 0; i < splitText.length; i++) {
+      // Check if we need a new page
+      if (currentLine >= maxLinesPerPage) {
+        pdf.addPage();
+        yPosition = marginTop;
+        currentLine = 0;
+      }
+      
+      pdf.text(splitText[i], 10, yPosition);
+      yPosition += lineHeight;
+      currentLine++;
+    }
 
-    pdf.save("report.pdf");
+    pdf.save("hotel-eternora-report.pdf");
   }
 </script>
 </body>
