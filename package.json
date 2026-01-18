@@ -2,8 +2,10 @@
   "name": "navbar",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "node --watch server.js"
   },
   "author": "",
   "license": "ISC",
@@ -11,6 +13,8 @@
   "dependencies": {
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3"
   }
 }
