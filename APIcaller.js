@@ -1,9 +1,8 @@
-import CONFIG from './config.js';
 
 // Update your fetchData function to use the appropriate transformation function
 async function fetchData(endpoint) {
     try {
-        const response = await fetch(`${CONFIG.API_BASE_URL}/${endpoint}`, {
+        const response = await fetch(`https://grooveintheback.onrender.com/api/${endpoint}`, {
             method: "GET"
         });
         
