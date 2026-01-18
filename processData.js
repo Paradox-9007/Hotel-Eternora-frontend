@@ -1,4 +1,4 @@
-import { fetchClientRequest, fetchBookingsRequest } from "./apiCaller.js";
+import { fetchClientRequest, fetchBookingsRequest } from "../apiCaller.js";
 
 const bookingsData = await fetchBookingsRequest();
 const clientData = await fetchClientRequest();
