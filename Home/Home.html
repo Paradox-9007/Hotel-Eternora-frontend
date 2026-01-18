@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <!-- GTranslate will be loaded by nav.js -->
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../theme.css" />
+    <link href="https://fonts.cdnfonts.com/css/ophelia-2" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/rangile" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/navitism" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/bunga-zivilia" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet">
+
+                
+   <style>
+      /* @import url('https://fonts.cdnfonts.com/css/lovelace'); */
+      /* @font-face {
+        font-family: 'Batangas';
+        src: url('../fonts/Batangas.ttf') format('truetype');
+      } */
+
+
+      body.dark-mode {
+        --text-color: var(--main-text);
+        --overlay-bg:  rgba(0, 0, 0, 0.285);
+        --banner-bg:linear-gradient(135deg, #484b6a, #232946);
+        --pony-tb:#2a2f46;
+        --text-sh:2px 2px 4px #221d2863;
+        --bgcard:#b4b9ce;
+        --glassbox:rgba(0, 0, 0, 0.6);
+        --hovercolor:black;
+        --carolicon:#617393;
+       
+        
+        /* --glassboxbtn: */
+        
+        /* --pony-tb:#363059; */
+        /* --pony-tb:#cacce1;*/
+           /* --pony-tb:#76768e; */
+          /* --pony-tb:#adb0bb;*/ 
+        
+      }
+
+      body:not(.dark-mode) {
+        --text-color: var(--main-text);
+        --overlay-bg:rgba(255, 255, 255, 0.405) ;
+        --banner-bg:linear-gradient(135deg, #FEFCFF, #DCE4F7, #A9B5DF);
+        --pony-tb:#CAD0EF;
+        --bgcard:#CAD0EF;
+        --glassbox: rgba(255, 255, 255, 0.6);
+        --hovercolor:white;
+        --text-sh:2px 2px 4px #ffffff34;
+        --carolicon:#B3B8D9;
+        
+
+        
+      }
+
+      .bg-image {
+          margin-top: -75px;
+          width: 100%;
+          height: 100vh;
+          background-image: linear-gradient(
+              rgba(0, 0, 0, 0.3),
+              rgba(0, 0, 0, 0.3)
+            ),
+            url("../hackathon/welcome.webp");
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          color: white;
+          padding: 0 20px;
+      }
+      /* .bg-image h1 {
+        font-size: 4.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        color: var(--text-color);
+      }
+      .bg-image p {
+        font-size: 1.5rem;
+        margin-bottom: 0;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        color: var(--text-color);
+      } */
+
+      .overlay-box {
+      background-color:var(--overlay-bg); /* semi-transparent dark overlay */
+      border-radius: 1rem;
+      padding: 2rem;
+      color:var(--text-color);
+      max-width: 800px;
+    }
+
+    
+
+      .heading-text {
+      font-size: 4rem;
+      font-weight: bold;
+      font-weight: 700;
+      text-shadow: var(--text-sh);
+      font-family: 'Bunga Zivilia', sans-serif;
+                                                
+                                                
+                                                
+    }
+
+    /* Add this style for the welcome paragraph */
+      .overlay-box p {
+        font-family: 'Batangas';
+        font-size: 1.2rem;
+        line-height: 1.6;
+        font-family: 'Lora', serif;
+      }
+
+      /* Add these styles in the existing <style> section */
+        /* Add these media queries in your style section */
+@media screen and (max-width: 1024px) {
+    .overlay-box {
+        padding: 2rem;
+        max-width: 80%;
+    }
+    
+    .heading-text {
+        font-size: 3.5rem;
+        line-height: 1.3;
+    }
+    
+    .overlay-box p {
+        font-size: 1.1rem;
+        line-height: 1.5;
+        padding: 0 1rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .overlay-box {
+        padding: 1.8rem;
+        max-width: 90%;
+    }
+    
+    .heading-text {
+        font-size: 3rem;
+        line-height: 1.2;
+    }
+    
+    .overlay-box p {
+        font-size: 1rem;
+        line-height: 1.4;
+        padding: 0 0.5rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .overlay-box {
+        padding: 1.5rem;
+        max-width: 95%;
+        margin: 0 auto;
+    }
+    
+    .heading-text {
+        font-size: 2.5rem;
+        line-height: 1.2;
+        margin-bottom: 0.8rem;
+    }
+    
+    .overlay-box p {
+        font-size: 0.95rem;
+        line-height: 1.4;
+        padding: 0;
+    }
+}
+@media screen and (max-width: 375px) {
+    .overlay-box {
+        padding: 1.5rem;
+        max-width: 90%;
+        margin: 0 auto;
+    }
+
+    .heading-text {
+        font-size: 2.5rem;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+    }
+
+    .overlay-box p {
+        font-size: 1rem;
+        line-height: 1.4;
+        margin-top: 0.5rem;
+    }
+}
+
+/* For even smaller screens */
+@media screen and (max-width: 320px) {
+    .heading-text {
+        font-size: 2rem;
+    }
+
+    .overlay-box p {
+        font-size: 0.9rem;
+    }
+}
+
+      .title {
+        text-align: center;
+        margin-top: 8vh;
+        /* line-height: 1.4;
+        margin-bottom: 0.5rem; */
+        
+      }
+      .banner-container {
+        position: relative;
+        text-align: center;
+        text-shadow: var(--text-sh);
+      }
+      .banner {
+        background: var(--banner-bg);
+        padding: 3.5rem 0;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 2;
+      }
+      .polygon-top,
+      .polygon-bottom {
+          position: absolute;
+          width: 100%;
+          height: 40px;
+          left: 0;
+          z-index: 1;
+        }
+        
+        .polygon-top {
+          top: -40px;
+        }
+        
+        .polygon-bottom {
+          bottom: -40px;
+        }
+        
+        .polygon-top polygon,
+        .polygon-bottom polygon {
+          fill: var(--pony-tb);
+          z-index: 2;
+        }
+      .banner-container {
+          position: relative;
+          z-index: 1; /* Keep the banner below the polygons */
+        }
+      .banner h2 {
+        color: var(--text-color);
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-shadow:var(--text-sh) ;
+        font-family: 'Playfair Display', serif;
+      }
+ 
+      .carousel-container {
+        margin-top: auto;
+      }
+      /*Booking Data Css*/
+      .booking-data {
+        width: 100%;
+        height: 100vh;
+        background-image: url("../hackathon/booking.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        margin-top: auto;
+        display: flex;   
+        align-items: center;
+        justify-content: flex-start;
+        padding-left: 5%; 
+      }
+
+      .glass-box {
+      background: var(--glassbox);
+      backdrop-filter: blur(3px);
+      padding: 3rem;
+      border-radius: 2rem;
+      max-width: 600px;
+      text-align: left;
+      margin-top: 5vh;
+    }
+
+    .glass-box h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      color:var(--text-color);
+      font-family: 'Libre Baskerville', serif;
+    }
+
+    .glass-box p {
+      font-size: 1rem;
+      color:var(--text-color);
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+      font-family: 'Lora', serif;
+    }
+
+    .glass-box .btn-rounded {
+      border-radius: 2rem;
+      background-color:var(--btn-bg);
+      color:var(--text-color);
+      font-weight: 500;
+    }
+
+    .glass-box .btn-rounded:hover {
+      background-color: #a9b5df;
+      color: var(--hovercolor);
+    }
+
+    /* booking data mobile responsive*/
+    @media (max-width: 1024px) {
+        .glass-box {
+          max-width: 500px;
+          padding: 2.5rem;
+        }
+        .glass-box h1 {
+          font-size: 2.5rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .glass-box {
+          max-width: 90%;
+          padding: 2rem;
+          margin: 0 auto;
+        }
+        .glass-box h1 {
+          font-size: 2rem;
+        }
+        .glass-box p {
+          font-size: 0.9rem;
+        }
+      }
+    
+    /*DataSource Data Css*/
+    .DataSource{
+        width: 100%;
+        height: 100vh;
+        background-image: url("../hackathon/booking.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        margin-top: auto;
+        display: flex;   
+        align-items: center;
+        justify-content: flex-end;
+        padding-left: 5%; 
+      }
+
+    .DataSource-glassbox {
+      background: var(--glassbox);
+      backdrop-filter: blur(3px);
+      padding: 3rem;
+      border-radius: 2rem;
+      max-width: 600px;
+      text-align: right;
+      margin-top: 5vh;
+    }
+
+    .DataSource-glassbox h1 {
+      font-size: 3rem;
+      color:var(--text-color);
+      font-weight: 700;
+      font-family: 'Libre Baskerville', serif;
+    }
+
+    .DataSource-glassbox p {
+      font-size: 1rem;
+      color:var(--text-color);
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+      font-family: 'Lora', serif;
+    }
+
+    .DataSource-glassbox .btn-rounded {
+      border-radius: 2rem;
+      background-color:var(--btn-bg);
+      color:var(--text-color);
+      font-weight: 500;
+    }
+
+    .DataSource-glassbox .btn-rounded:hover {
+      background-color: #a9b5df;
+      color: var(--hovercolor);
+    }
+
+    /* Added responsive styles for DataSource section */
+    @media (max-width: 1024px) {
+      .DataSource-glassbox {
+          max-width: 500px;
+          padding: 2.5rem;
+        }
+        .DataSource-glassbox h1 {
+          font-size: 2.5rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+      .DataSource-glassbox {
+          max-width: 90%;
+          padding: 2rem;
+          margin: 0 auto;
+        }
+        .DataSource-glassbox h1 {
+          font-size: 2rem;
+        }
+        .DataSource-glassbox p {
+          font-size: 0.9rem;
+        }
+    }
+
+
+      /* Updated carousel controls - positioned at screen edges */
+      .carousel-control-prev,
+      .carousel-control-next {
+        width: 30px !important;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+      }
+
+
+
+      /* Make carousel control icons more visible */
+      .carousel-control-prev-icon,
+      .carousel-control-next-icon {
+        width: 30px;
+        height:30px;
+        border-radius: 50%;
+        background-color:var(--carolicon);
+        
+      }
+
+      /* Card styles for carousel - making elements bigger */
+      #news-carousel {
+        min-height: 200px;
+        position: relative;
+        margin: 60px 0;
+        overflow: visible;
+      }
+
+      #news-carousel .card {
+        height: 100%;
+        margin-bottom: 20px;
+        border: 1px solid #e0e0e0;
+        background-color: var(--newcard);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      #news-carousel .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      #news-carousel .card-title {
+        font-weight: 700;
+        font-size: 1.4rem;
+        margin-bottom: 15px;
+        line-height: 1.3;
+      }
+
+      #news-carousel .card-text {
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 20px;
+        line-height: 1.6;
+      }
+
+      /* Enhanced card body with more padding */
+      #news-carousel .card-body {
+        display: flex;
+        flex-direction: column;
+        height: fit-content;
+        padding: 25px;
+      }
+
+      #news-carousel .btn {
+        margin-top: auto;
+        padding: 10px 20px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Consistent spacing in carousel items */
+      .carousel-item {
+        padding: 30px;
+      }
+
+      /* Make cards more responsive with flex */
+      .news-card-row {
+        display: flex;
+        flex-wrap: wrap;
+        height: max-content;
+      }
+
+      .news-card-col {
+        flex: 1 0 100%;
+        padding: 15px;
+      }
+
+      /* Responsive breakpoints for cards */
+      @media (min-width: 768px) {
+        .news-card-col {
+          flex: 0 0 50%;
+          max-width: 50%;
+        }
+      }
+
+      @media (min-width: 992px) {
+        .news-card-col {
+          flex: 0 0 33.333%;
+          max-width: 33.333%;
+        }
+      }
+
+      /* Full-width carousel container */
+      .carousel-container {
+        width: 100%;
+        max-width: 100%;
+        padding: 0;
+      }
+
+      /* Adjust carousel inner to use full width */
+      #news-carousel .carousel-inner {
+        width: 100%;
+      }
+      
+      .navbar {
+    transition: background-color 0.3s ease;
+  }
+
+  .navbar.show-nav {
+    background-color: var(--bg-primary) !important;
+  }
+        /* Add these styles in your existing style section */
+       
+        @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-text {
+    opacity: 0;
+    animation: fadeInUp 1.5s ease-out forwards;
+  }
+
+  .delay-1 {
+    animation-delay: 0.5s;
+  }
+
+  .delay-2 {
+    animation-delay: 1s;
+  }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar Placeholder -->
+    <div id="navbar-placeholder" ></div>
+
+    <!-- Photo Section -->
+    <div class="bg-image">
+      <div class="overlay-box text-center">
+        <div class="heading-text animate-text">Welcome To<br>Eternora Analytics</div>
+        <p class="mt-3 animate-text delay-1" style="font-weight: 700;">
+          Providing Hotel Eternora's booking analytics dashboards and a suite of powerful tools—
+          all designed for our hotel managers' ease and efficiency.
+        </p>
+      </div>
+    </div>
+
+
+
+    
+    <!-- Banner Section -->
+ 
+    <div class="banner-container">
+      <svg
+        class="polygon-top"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 100 10"
+        preserveAspectRatio="none"
+      >
+        <polygon points="0,10 100,0 100,10" />
+      </svg>
+ 
+      <div class="banner">
+        <h2>Track arrivals, departures, cancellations, and birthdays with real-time booking insights</h2>
+      </div>
+ 
+      <svg
+        class="polygon-bottom"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 100 10"
+        preserveAspectRatio="none"
+      >
+        <polygon points="0,0 100,0 0,10" />
+      </svg>
+    </div>
+
+    <div class="title">
+      <h1 style="font-family:'Lora', serif;">Trending News</h1>
+    </div>
+    <!-- Carousel Section with Fixed Controls at Screen Edges -->
+    <div class="container-fluid carousel-container my-5">
+      <div
+        id="news-carousel"
+        class="carousel slide position-relative"
+        data-bs-ride="carousel"
+      >
+        <div class="carousel-inner" id="carousel-content">
+          <!-- Carousel content will be loaded by JavaScript -->
+        </div>
+        <!-- Fixed carousel controls -->
+        <button
+          class="carousel-control-prev absolute top-50 start-0"
+          type="button"
+          data-bs-target="#news-carousel"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next absolute top-50 end-0"
+          type="button"
+          data-bs-target="#news-carousel"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom Banner Section -->
+    <div class="banner-container">
+     
+      <svg
+        class="polygon-top"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 100 10"
+        preserveAspectRatio="none"
+      >
+        <polygon points="0,0 100,10 0,10" />
+      </svg>
+ 
+      <div class="banner">
+        <h2>Compare member vs. general guest trends, age groups, and popular unit bookings.</h2>
+      </div>
+ 
+      <svg
+        class="polygon-bottom"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 100 10"
+        preserveAspectRatio="none"
+      >
+        <polygon points="0,0 100,0 0,10" />
+      </svg>
+    </div>
+
+    <!-- Booking Data Image Section -->
+    <div class="booking-data">
+
+      <div class="glass-box shadow">
+        <h1>Analytics<br>Dashboards</h1>
+        <p>
+          Our intuitive dashboards empower hotel managers with real-time insights—
+          from daily arrivals and departures, occupancy rates, to guest age segmentation, and more—enabling smarter decisions and elevated guest experiences at Eternora.
+        </p>
+        <a href="../dashboard.html" class="btn btn-rounded px-4 py-2">Read More</a>
+      </div>
+
+    </div>
+
+    <!-- Additional Bottom Banner Section -->
+    <div class="banner-container">
+      <svg
+        class="polygon-top"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 100 10"
+        preserveAspectRatio="none"
+      >
+        <polygon points="0,0 100,10 0,10" />
+      </svg>
+ 
+      <div class="banner">
+        <h2>Monitor occupancy rates, ADR, and total income monthly and yearly with ease.</h2>
+      </div>
+ 
+      <svg
+        class="polygon-bottom"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 100 10"
+        preserveAspectRatio="none"
+      >
+        <polygon points="0,0 100,0 0,10" />
+      </svg>
+    </div>
+
+    <!-- DataSource Image Section -->
+    <div class="DataSource" style="  width: 100%;  height: 100vh; background-image: url('../hackathon/client.jpg'); background-size: cover;  background-position: center; background-repeat: no-repeat; " > 
+     <div class="DataSource-glassbox">
+          <h1>Data<br>Source</h1>
+          <p>
+            Our intuitive dashboards empower hotel managers with real-time insights—
+            from daily arrivals and departures, occupancy rates, to guest age segmentation, and more—enabling smarter decisions and elevated guest experiences at Eternora.
+          </p>
+          <a href="../data-source/data-source.html" class="btn btn-rounded px-4 py-2">Read More</a>
+     </div>
+  </div>
+
+    <!-- Final Banner Section -->
+    <div class="banner-container">
+      <svg
+        class="polygon-top"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 100 10"
+        preserveAspectRatio="none"
+      >
+        <polygon points="0,10 100,0 100,10" />
+      </svg>
+ 
+      <div class="banner">
+        <h2>Make smarter decisions with powerful, data-driven analytics for Hotel Eternora.</h2>
+      </div>
+ 
+      <svg
+      class="polygon-bottom"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 100 10"
+      preserveAspectRatio="none"
+    >
+      <polygon points="0,0 100,0 0,10" />
+    </svg></div>
+
+    
+     <!-- Footer Section -->
+     <footer class="bg-dark text-light py-4" style="font-family: 'Open Sans', sans-serif;">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <h5 ><br><br>GROOVE</h5>
+            <p>
+              Providing innovative analytics solutions for your business
+              success.
+            </p>
+          </div>
+          <div class="col-md-4 mb-3">
+            <h5>Contact Info</h5>
+            <p>
+              <i class="fa fa-envelope me-2"></i>contact@example.com<br />
+              <i class="fa fa-phone me-2"></i>+1 234 567 8900<br />
+              <i class="fa fa-map-marker me-2"></i>Rangsit
+              University(Information and Communications Technology)
+            </p>
+          </div>
+         
+        <hr class="my-3" />
+        <div class="row">
+          <div class="col text-center">
+            <p class="mb-0">
+              &copy; 2024 Analytics Dashboard. All rights reserved.
+            </p>
+          </div>
+
+    <!-- Your navbar script -->
+    <script src="../NavBar/nav.js"></script>
+
+    <!-- Font Awesome CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
+    <!-- Scroll to top button -->
+    <a class="scroll-top" title="Back to Top">
+      <i class="fa fa-angle-up" aria-hidden="true" style=" font-size: 20px;"></i>
+    </a>
+
+    <style>
+      .scroll-top {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: rgb(9, 9, 9);
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 80%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 1000;
+      }
+
+      .scroll-top.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .scroll-top:hover {
+        background-color: var(--accent-hover);
+        transform: translateY(-3px);
+      }
+    </style>
+
+    <script>
+      // Scroll to top functionality
+      const scrollTopBtn = document.querySelector(".scroll-top");
+
+      window.addEventListener("scroll", () => {
+        if (window.pageYOffset > 100) {
+          scrollTopBtn.classList.add("show");
+        } else {
+          scrollTopBtn.classList.remove("show");
+        }
+      });
+
+      scrollTopBtn.addEventListener("click", () => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      });
+    </script>
+
+    <script>
+      // Define news sources with categories
+      const newsSources = [
+        {
+          url: "https://grooveintheback.onrender.com/api/news/traveltrendsandfocus",
+          category: "traveltrendsandfocus",
+        },
+        {
+          url: "https://grooveintheback.onrender.com/api/news/traveltechnologynews",
+          category: "traveltechnologynews",
+        },
+        {
+          url: "https://grooveintheback.onrender.com/api/news/travelassociationnews",
+          category: "travelassociationnews",
+        },
+      ];
+
+      let allNewsItems = [];
+
+      // Fetch all news sources
+      Promise.all(
+        newsSources.map((source) =>
+          fetch(source.url)
+            .then((response) => response.json())
+            .then((data) => ({ data, category: source.category }))
+            .catch((error) => {
+              console.error(`Error fetching ${source.url}:`, error);
+              return null;
+            })
+        )
+      ).then((results) => {
+        allNewsItems = [];
+
+        results.forEach((result) => {
+          if (
+            result &&
+            result.data &&
+            result.data.rss &&
+            result.data.rss.channel &&
+            result.data.rss.channel.item
+          ) {
+            const category = result.category;
+            result.data.rss.channel.item.forEach((news) => {
+              allNewsItems.push({ ...news, category });
+            });
+          }
+        });
+
+        if (allNewsItems.length === 0) {
+          document.getElementById("carousel-content").innerHTML =
+            "<div class='carousel-item active'><div class='container-fluid'><p class='text-center p-5'>No news available.</p></div></div>";
+        } else {
+          renderNews("all"); // Render the news items once data is loaded
+        }
+      });
+
+      // Updated function to render news inside the carousel with flex layout
+      function renderNews(category) {
+        const carouselContent = document.getElementById("carousel-content");
+        carouselContent.innerHTML = ""; // Clear existing slides
+
+        // Filter items based on category if not "all"
+        const filteredNewsItems =
+          category === "all"
+            ? allNewsItems
+            : allNewsItems.filter((item) => item.category === category);
+
+        // Loop through news items and group them in sets of 3
+        for (let i = 0; i < filteredNewsItems.length; i += 3) {
+          const slideItems = filteredNewsItems.slice(i, i + 3); // Get 3 items per slide
+
+          // Create a slide with Bootstrap's "carousel-item"
+          const slide = document.createElement("div");
+          slide.classList.add("carousel-item");
+          if (i === 0) slide.classList.add("active"); // Make the first slide active
+
+          // Create a container for the slide
+          const container = document.createElement("div");
+          container.classList.add("container-fluid");
+
+          // Create a flex row to hold the cards in each slide
+          const row = document.createElement("div");
+          row.classList.add("news-card-row");
+
+          // Loop through the news items and create Bootstrap cards
+          slideItems.forEach((news) => {
+            const col = document.createElement("div");
+            col.classList.add("news-card-col");
+            const contentEncoded = news["content:encoded"];
+            const imageMatch = contentEncoded.match(/<img.*?src=["'](.*?)["']/);
+
+            const image = imageMatch ? imageMatch[1] : null;
+            const card = `
+            <div class="card h-100">
+              <div style="width: 100%; height: 250px; overflow: hidden;">
+                <img src="${image}" style="width: 100%; height: 100%; object-fit: cover;">
+              </div>
+
+              <div class="card-body d-flex flex-column" style="padding: 10px; height: 80px; overflow: hidden;">
+                <p class="card-title" style="font-size: 18px; margin: 0;  
+                  display: -webkit-box;
+                  -webkit-line-clamp: 3; 
+                  -webkit-box-orient: vertical; 
+                  overflow: hidden;
+                  font-family:'Lora', serif;">
+                  ${news.title}
+                </p>
+              </div>
+
+
+
+            
+                <div class="card-footer">
+                  <p><a href="../News/news.html?category=${
+                  news.category
+                }&title=${encodeURIComponent(news.title)}" class="btn" style="background-color:var(--carolicon);  font-family: 'Lora', serif;">Read More</a></p>
+              </div>
+            </div>
+            
+            `;
+
+            col.innerHTML = card;
+            row.appendChild(col);
+          });
+
+          container.appendChild(row);
+          slide.appendChild(container);
+          carouselContent.appendChild(slide);
+        }
+      }
+
+      // Initialize the carousel after page load and ensure arrows are positioned correctly
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize Bootstrap carousel
+        var carousel = new bootstrap.Carousel(
+          document.getElementById("news-carousel"),
+          {
+            interval: 3000,
+            wrap: true,
+          }
+        );
+      });
+    </script>
+   <script>
+    // Wait for navbar to be loaded
+    const checkNavbar = setInterval(() => {
+      const navbarToggler = document.querySelector('.navbar-toggler');
+      const navbar = document.querySelector('.navbar');
+      
+      if (navbarToggler && navbar) {
+        navbarToggler.addEventListener('click', function() {
+          navbar.classList.toggle('show-nav');
+        });
+        clearInterval(checkNavbar);
+      }
+    }, 100);
+  </script>
+
+  
+
+
+
+
+
+   
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

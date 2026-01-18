@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .db7-dashboard-container {
+      display: flex;
+      flex-direction: column;
+      min-height: min-content;
+      width: 100%;
+    }
+    
+    .db7-rect {
+      background-color: aliceblue;
+      color: black;
+      border: 1px solid black;
+      margin: 2px;
+      min-height: 60px;
+      margin-bottom: 20px;
+    }
+    
+    .db7-top-row {
+      display: flex;
+      flex: 1;
+      max-height: 140px;
+    }
+    
+    .db7-bottom-row {
+      display: flex;
+      flex: 2;
+    }
+    
+    .db7-main-section {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-end;
+    }
+    
+    .db7-side-section {
+      display: flex;
+      align-items: center; 
+      justify-content: center;
+      flex: 1;
+    }
+
+    .db7-top-tile {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #ffffff, #f8f9fa);
+        padding: 10px;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .db7-top-tile h4 {
+        font-size: 14px;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+        text-align: center;
+    }
+
+    .db7-top-tile p {
+        font-size: 18px;
+        font-weight: bold;
+        color: #2c3e50;
+        text-align: center;
+        margin: 0;
+    }
+
+    #db7-ai-container {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    #D7-ai-analysis {
+        font-size: 16px;
+        color: #272727;
+        text-align: left;
+    }
+
+    .loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-size: 1.2rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+  </style>
+</head>
+<body>
+  <h4 class="db7-heading">Booking Status Analytics</h4>
+  <div class="db7-dashboard-container">
+    <div class="db7-top-row">
+        <div class="db7-top-tile db7-rect" id="Canceled">
+            <h4>Cancelled Bookings</h4>
+            <p>kpi 1</p>
+        </div>
+        <div class="db7-top-tile db7-rect" id="Pending">
+            <h4>Provisional Bookings</h4>
+            <p>kpi 2</p>
+        </div>
+        <div class="db7-top-tile db7-rect" id="Accpeted">
+            <h4>Accepted Bookings</h4>
+            <p>kpi 3</p>
+        </div>
+    </div>
+
+    <div class="db7-bottom-row">
+      <div class="db7-main-section db7-rect">
+        <div class="db7-filter">
+            <select id="db7-choose-year" class="mt-2 mr-2"></select>
+            <select id="db7-choose-month" class="mt-2 mr-2"></select>
+        </div>
+            <canvas id="chart72" style="width: 100%; height: 100%; max-width: 850px; max-height: 450px;"></canvas>
+    </div>
+    <div class="db7-side-section db7-rect">
+          <canvas id="chart71" style="max-width: 350px; max-height: 350px;"></canvas>
+    </div>
+    </div>
+  </div>
+
+
+  <div style="margin-top: 20px; text-align: center;">
+    <button id="D7-generate-ai-report-button" style="padding: 10px 20px; border-radius: 5px; background-color: var(--card-bg); color: white; border: none; cursor: pointer;">Generate AI Report</button>
+</div>
+  <div id="db7-ai-container" class="db7-rect">
+      <div id="D7-ai-analysis"></div>
+      <button id="D7-retry-ai-analysis" style="margin-top: 10px;">Try Again</button>
+  </div>
+  <div id="D7-input-container" style="display: flex; flex-direction: column; width: 100%; margin-top: 10px;">
+      <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+          <div style="flex: 1;">
+          <input id="D7-ai-response-input" type="text" style=" width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #ccc; " placeholder="Enter your response here">
+          </div>
+
+          <div style="display: flex; margin-left: 5px; width: 400px;">
+          <div class="mb-3">
+              <label for="speech-lang-select"><strong>Select Language for Voice Input:</strong></label>
+              <select class="form-control" id="speech-lang-select" style="max-width: 300px;">
+              <option value="en-US">English (US)</option>
+              <option value="my-MM">Burmese (Myanmar)</option>
+              <option value="zh-CN">Chinese (Mandarin)</option>
+              <option value="th-TH">Thai</option>
+              <option value="ms-MY">Malay</option>
+              <option value="id-ID">Indonesian</option>
+              </select>
+      </div>
+          <button id="D7-text-to-speech" style="width: 100px; height: 50px; padding: 5px 0px 5px 0px; margin-left: 10px; border-radius: 5px; background-color:var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Listen</button>
+          <button id="D7-speech-to-text" style="width: 100px; height: 50px; padding: 5px 0px 5px 0px; margin-left: 10px; border-radius: 5px; background-color:var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Speak</button>
+          </div>
+      </div>
+
+      <div id="db7-last-ai-row" style="display: flex;">
+          <button id="D7-submit-response" style="width: 50%;margin-top: 10px; padding: 10px; border-radius: 5px; background-color: var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Submit</button>
+          
+  </div>
+  </div>
+
+</body>
+</html>
+<!-- Multi-language Speech-to-Text Script -->
+<script>
+    document.querySelectorAll('button[id$="-speech-to-text"]').forEach(button => {
+      button.addEventListener('click', () => {
+        const inputId = button.id.replace('-speech-to-text', '-ai-response-input');
+        const inputElement = document.getElementById(inputId);
+        const langSelector = document.getElementById("speech-lang-select");
+        const selectedLang = langSelector ? langSelector.value : 'en-US';
+  
+        if (!inputElement) return;
+  
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          alert("Your browser does not support Speech Recognition. Please use Chrome.");
+          return;
+        }
+  
+        const recognition = new SpeechRecognition();
+        recognition.lang = selectedLang;
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+  
+        recognition.start();
+  
+        recognition.onresult = function(event) {
+          const transcript = event.results[0][0].transcript;
+          inputElement.value = transcript;
+        };
+  
+        recognition.onerror = function(event) {
+          alert("Speech recognition error: " + event.error);
+        };
+      });
+    });
+  </script>
+<script>
+    import { drawStackedBarChart,drawPieChart } from '../drawChart.js';
+    import { fetchClientRequest, fetchBookingsRequest } from '../APIcaller.js'
+    import { generateBookingStatusChartData, generate_Barchart_dashboard_1_inYears } from '../processData.js';
+    import { generateAiContent } from '../aiAnalysis.js'
+
+// AI START xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+let kpi_for_ai = new Proxy({}, {
+    set(target, key, value) {
+        target[key] = value;
+        // Removed automatic call to updateAIAnalysis()
+        return true;
+    }
+});
+
+document.getElementById('db7-ai-container').style.display = 'none';
+document.getElementById('D7-input-container').style.display = 'none';
+
+document.getElementById('D7-generate-ai-report-button').addEventListener('click', () => {
+    updateAIAnalysis();
+    document.getElementById('D7-input-container').style.display = 'block';
+    document.getElementById('db7-ai-container').style.display = 'block';
+    document.getElementById('D7-generate-ai-report-button').style.display = 'none';
+});
+
+// Store the last used prompt to use for retries
+let lastUsedPrompt = '';
+
+function updateKpiForAi(key, value) {
+    kpi_for_ai[key] = value;
+}
+async function updateAIAnalysis() {
+    const aiAnalysisElement = document.getElementById('D7-ai-analysis');
+    const retryButton = document.getElementById('D7-retry-ai-analysis');
+    const responseInput = document.getElementById('D7-ai-response-input');
+    const inputTaker = document.getElementById('D7-input-container');
+
+    if (!aiAnalysisElement) return;
+
+    // Hide retry button and input container initially
+    retryButton.style.display = 'none';
+    inputTaker.style.display = 'none';
+
+    // Show loading state
+    aiAnalysisElement.innerHTML = `
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Generating</p>
+        </div>
+    `;
+
+    // Define the default prompt
+    const defaultPrompt = `Generate analytic reports on:
+        "Booking Cancellation Trends & Forecasts: What to Expect"
+        "Future Cancellation Rates: Predicting Guest Retention Challenges"
+        "Cancellation Risk Assessment: Trends and Future Projections"`;
+
+    // Determine the prompt to use
+    const userPrompt = responseInput.value.trim();
+    
+    // Update last used prompt, prioritizing user input
+    lastUsedPrompt = userPrompt || lastUsedPrompt || defaultPrompt;
+
+    const chartDataString = Object.values(kpi_for_ai).filter(Boolean).join('\n');
+    const combinedPrompt = `${lastUsedPrompt}\nBased on the following booking data:\n${chartDataString}`;
+
+    try {
+        console.log(`Generating AI content`);
+        
+        // Improved timeout and error handling
+        const generatePromise = generateAiContent('D7-ai-analysis', combinedPrompt, '');
+        
+        const status = await Promise.race([
+            generatePromise,
+            new Promise((_, reject) => setTimeout(() => {
+                console.log(`Timeout`);
+                reject(new Error('Request timeout'));
+            }, 30000))
+        ]);
+
+        console.log(`Status:`, status);
+
+        if (status === 'success') {
+            inputTaker.style.display = 'flex';
+            return;
+        } else {
+            // Log more detailed error information if available
+            const errorDetails = await generatePromise.catch(err => err);
+            console.error(`Detailed error:`, errorDetails);
+            throw new Error('Failed to generate AI content');
+            retryButton.style.display = 'block';
+        }
+    } catch (error) {
+        console.error(`Failed:`, error);
+       
+        aiAnalysisElement.innerHTML = `
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Generating</p>
+            </div>
+        `;
+        inputTaker.style.display = 'none';
+    }
+}
+
+// Event listeners
+document.getElementById('D7-submit-response').addEventListener('click', () => {
+    updateAIAnalysis();
+});
+
+document.getElementById('D7-retry-ai-analysis').addEventListener('click', () => {
+    // Use the last used prompt when retrying
+    const responseInput = document.getElementById('D7-ai-response-input');
+    responseInput.value = lastUsedPrompt;
+    updateAIAnalysis();
+});
+
+document.getElementById('D7-text-to-speech').addEventListener('click', function() {
+    const aiAnalysisElement = document.getElementById('D7-ai-analysis');
+    const text = aiAnalysisElement.textContent || aiAnalysisElement.innerText;
+    const speechButton = this;
+
+    if (speechButton.textContent === 'Listen') {
+        const speech = new SpeechSynthesisUtterance(text);
+        speech.onend = () => {
+            speechButton.textContent = 'Listen';
+        };
+        window.speechSynthesis.speak(speech);
+        speechButton.textContent = 'Stop';
+    } else {
+        window.speechSynthesis.cancel();
+        speechButton.textContent = 'Listen';
+    }
+});
+
+// AI END xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+    // Global variables for state management
+let globalSelectedYear = '';
+let globalSelectedMonth = '';
+
+// let currentYear = new Date().getFullYear();
+// let currentMonth = new Date().getMonth() + 1;
+let currentYear = 2025;
+let currentMonth = 3;
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const full_months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const availableYears = generate_Barchart_dashboard_1_inYears()[0];
+let bar = true;
+const status_color = {
+    Q: "rgba(255, 206, 86, 0.7)", // Yellow for Quote
+    E: "rgba(255, 99, 132, 0.7)", // Red for Quote Rejected
+    W: "rgba(153, 102, 255, 0.7)", // Purple for Waiting List
+    I: "rgba(75, 192, 192, 0.7)", // Teal for Internet
+    P: "#009E73", // Blue for Provisional
+    C: "rgba(255, 255, 255, 0.7)", // Orange for Confirmed
+    D: "rgba(201, 203, 207, 0.7)", // Grey for Deposit Paid
+    U: "rgba(0, 255, 0, 0.7)", // Green for Fully Paid
+    A: "#0072B2", // Dark Green for Active
+    L: "rgba(128, 128, 128, 0.7)", // Grey for Left
+    N: "rgba(139, 69, 19, 0.7)", // Brown for No Show
+    F: "rgba(255, 0, 0, 0.7)", // Red for Faulty
+    X: "#CC79A7", // Crimson for Cancelled
+    O: "rgba(0, 0, 139, 0.7)", // Dark Blue for Closed
+    R: "rgba(128, 0, 0, 0.7)", // Maroon for Restricted
+  };
+
+// Define status code mappings
+const statusLabels = {
+  'Q': 'Quote',
+  'E': 'Quote Rejected',
+  'W': 'Waiting List',
+  'I': 'Internet',
+  'P': 'Provisional',
+  'C': 'Confirmed',
+  'D': 'Deposit Paid',
+  'U': 'Fully Paid',
+  'A': 'Active',
+  'L': 'Left',
+  'N': 'No Show',
+  'F': 'Faulty',
+  'X': 'Cancelled',
+  'O': 'Closed',
+  'R': 'Restricted'
+};
+
+
+function handleDropdown() {
+    const chooseYear = document.getElementById("db7-choose-year");
+    const chooseMonth = document.getElementById("db7-choose-month");
+
+    if (!chooseYear || !chooseMonth) {
+        console.error("Dropdown elements not found.");
+        return;
+    }
+
+    // Create dropdown for selecting a year
+    chooseYear.innerHTML = `<option value="" style="text-align: center;">All Years</option>
+    ${availableYears.map(year => `<option value="${year}" style="text-align: center;">${year}</option>`).join('')}`;
+    
+    chooseYear.value = currentYear;  // Set current year as default
+    globalSelectedYear = currentYear;  // Set global selected year to current year
+
+    chooseYear.addEventListener("change", function () {
+        globalSelectedYear = this.value;
+
+        // Reset month selection when a new year is selected
+        globalSelectedMonth = '';
+        chooseMonth.value = ''; 
+        chooseMonth.style.display = globalSelectedYear === "" ? "none" : "inline";
+
+        if (globalSelectedYear !== "") {
+            populateMonthDropdown();
+        }
+
+        updateCharts(parseInt(globalSelectedYear), globalSelectedMonth ? parseInt(globalSelectedMonth) : null);
+    });
+
+    // Handle month selection change
+    chooseMonth.addEventListener("change", function () {
+        globalSelectedMonth = this.value;
+        if (this.value === "") {
+            globalSelectedMonth = '';  // Reset to empty string for "All Months"
+        }
+
+        updateCharts(parseInt(globalSelectedYear), parseInt(globalSelectedMonth));
+    });
+}
+
+function populateMonthDropdown() {
+    const chooseMonth = document.getElementById("db7-choose-month");
+
+    if (!chooseMonth) {
+        console.error("Error: 'db7-choose-month' element not found.");
+        return;
+    }
+
+    // Populate the month dropdown
+    chooseMonth.innerHTML = `<option value="" style="text-align: center;">All Months</option>
+        ${months.map((month, index) => `<option value="${index + 1}" style="text-align: center;">${month}</option>`).join('')}`;
+
+    if (bar) {
+        chooseMonth.value = currentMonth;
+        globalSelectedMonth = currentMonth;
+        bar = false;
+        updateCharts(parseInt(globalSelectedYear), parseInt(globalSelectedMonth));
+    }
+}
+
+function getDaysInMonth(year, month) {
+    // For all years view or year-only view, return 31 days
+    if (!month) return 31;
+    return new Date(year, month, 0).getDate();
+}
+
+function updateCharts(year = currentYear, month = currentMonth) {
+    let pieChartData, barChartData;
+    let periodLabel = '';
+    let barChartLabels = [];
+
+    if (!globalSelectedYear) {
+        // All Years view
+        pieChartData = generateBookingStatusChartData();
+        barChartData = generateBookingStatusChartData(null, null, statusLabels);
+        periodLabel = 'All Years';
+        barChartLabels = availableYears;
+    } else if (!globalSelectedMonth) {
+        // Specific year view
+        pieChartData = generateBookingStatusChartData(parseInt(globalSelectedYear));
+        barChartData = generateBookingStatusChartData(parseInt(globalSelectedYear), null, statusLabels);
+        periodLabel = `Year ${globalSelectedYear}`;
+        barChartLabels = months;
+    } else {
+        // Specific month view
+        pieChartData = generateBookingStatusChartData(parseInt(globalSelectedYear), parseInt(globalSelectedMonth));
+        barChartData = generateBookingStatusChartData(parseInt(globalSelectedYear), parseInt(globalSelectedMonth), statusLabels);
+        periodLabel = `${months[parseInt(globalSelectedMonth) - 1]} ${globalSelectedYear}`;
+        const daysInMonth = getDaysInMonth(globalSelectedYear, globalSelectedMonth);
+        barChartLabels = Array.from({length: daysInMonth}, (_, i) => i + 1);
+    }
+
+    // Transform pie chart labels to include descriptions
+    const pieLabels = pieChartData.labels.map(label => `${label} - ${statusLabels[label] || label}`);
+
+    // Calculate totals for KPIs
+    const totalBookings = pieChartData.data.reduce((sum, count) => sum + count, 0);
+    const activeBookings = pieChartData.labels.reduce((sum, label, index) => {
+        if (['A', 'D', 'U', 'P', 'C'].includes(label)) {
+            return sum + pieChartData.data[index];
+        }
+        return sum;
+    }, 0);
+    const completedBookings = pieChartData.labels.reduce((sum, label, index) => {
+        if (['L', 'O'].includes(label)) {
+            return sum + pieChartData.data[index];
+        }
+        return sum;
+    }, 0);
+
+    // Update KPIs
+    document.getElementById('Canceled').textContent = 
+        `Cancelled Bookings: ${pieChartData.labels.reduce((sum, label, index) => {
+            if (['X'].includes(label)) {
+                return sum + pieChartData.data[index];
+            }
+            return sum;
+        }, 0).toLocaleString()} (${periodLabel})`;
+    document.getElementById('Pending').textContent = 
+        `Provisional Bookings: ${pieChartData.labels.reduce((sum, label, index) => {
+            if (['Q', 'W', 'I', 'P'].includes(label)) {
+                return sum + pieChartData.data[index];
+            }
+            return sum;
+        }, 0).toLocaleString()}`;
+    document.getElementById('Accpeted').textContent = 
+        `Accepted Bookings: ${pieChartData.labels.reduce((sum, label, index) => {
+            if (['C', 'D', 'U', 'A'].includes(label)) {
+                return sum + pieChartData.data[index];
+            }
+            return sum;
+        }, 0).toLocaleString()}`;
+
+    // Draw the charts
+    const pieChartDataWithColors = {
+        labels: pieLabels,
+        data: pieChartData.data,
+        backgroundColor: pieChartData.labels.map(label => status_color[label])
+    };
+
+    drawPieChart('chart71', pieChartDataWithColors.labels, pieChartDataWithColors,
+        !globalSelectedYear ? 'Booking Status Percentages for All Time' :
+        !globalSelectedMonth ? `Booking Status Percentages for ${globalSelectedYear}` :
+        `Booking Status Percentages for ${full_months[globalSelectedMonth-1]}, ${globalSelectedYear}`, 
+        'top');
+    
+    updateKpiForAi("2" , `Total number of each status: ${pieLabels.map((label, index) => `${label}:${pieChartData.data[index]}`).join(', ')}`);
+
+
+    drawStackedBarChart(
+        'chart72',
+        barChartLabels,
+        barChartData.datasets
+    );
+
+    updateKpiForAi("1" , `Stacked Bar Chart Data for ${periodLabel}: Time periods- ${barChartLabels.join(', ')}, ${barChartData.datasets.map(dataset => `${dataset.label}: ${dataset.data.join(', ')}`).join('; ')}`);
+
+
+}
+
+// Initialize the dashboard
+handleDropdown();
+populateMonthDropdown();
+// Set the charts for the current month and year by default
+updateCharts(currentYear, currentMonth);
+
+</script>

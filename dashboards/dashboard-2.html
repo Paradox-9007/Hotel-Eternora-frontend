@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .db2-dashboard-container {
+      display: flex;
+      flex-direction: column;
+      min-height: min-content;
+      width: 100%;
+    }
+    
+    .db2-rect {
+      background-color: aliceblue;
+      margin: 2px;
+    }
+    
+    .db2-top-section {
+      display: flex;
+      flex: 4;
+    }
+
+.db2-middle-section {
+    flex: 2; 
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    height: max-content;
+    margin: 0;
+}
+
+.db2-kpi {
+    flex: 1;
+    height: 100%;
+    margin: 5px;
+    padding: 10px; /* Reduce padding for a more compact look */
+    border-radius: 8px; /* Slightly less rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Reduce shadow for less depth */
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex; /* Use flexbox for alignment */
+    flex-direction: column;
+    align-items: center; /* Center items vertically */
+    justify-content: center; /* Center items horizontally */
+    margin: 20px 10px;
+}
+
+.db2-kpi p{
+    text-align: center;
+    color: #272727;
+    font-size: 14px; /* Increase font size slightly for better readability */
+}
+    
+    .db2-bottom-section {
+      display: flex;
+      flex: 3;
+    }
+    
+    .db2-top-tile {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    
+    .db2-bottom-tile {
+      flex: 2;
+    }
+
+    #db2-ai-container {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    #D2-ai-analysis {
+        font-size: 16px;
+        color: #272727;
+        text-align: left;
+    }
+
+    .loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-size: 1.2rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+  </style>
+</head>
+<body>
+    <h4 class="db2-heading">Comparison of Member vs General Guest arrival bookings</h4>
+  <div class="db2-dashboard-container">
+    <div class="db2-top-section">
+      <div class="db2-top-tile db2-rect">
+        <div class="db2-filter">
+            <select id="db2-choose-year"></select>
+            <select id="db2-choose-month"></select>
+          </div>
+        <canvas id="chart21"></canvas>
+      </div>
+      <div class="db2-top-tile db2-rect">
+        <canvas id="chart22"></canvas>
+      </div>
+    </div>
+    
+    <div class="db2-middle-section db2-rect" style="background-color: transparent;">
+        <div id="db2-kpi-two" class="db2-kpi" style="background-color: aliceblue;">kpi two</div>
+        <div id="db2-kpi-one" class="db2-kpi" style="background-color: aliceblue;">kpi one</div>
+        <div id="db2-kpi-three" class="db2-kpi"style="background-color: aliceblue;">kpi three</div>
+        <div id="db2-kpi-four" class="db2-kpi"style="background-color: aliceblue;">kpi four</div>
+        <div id="db2-kpi-five" class="db2-kpi"style="background-color: aliceblue;">kpi five</div>
+        <div id="db2-kpi-six" class="db2-kpi"style="background-color: aliceblue;">kpi six</div>
+    </div>
+    
+    <div class="db2-bottom-section">
+      <div class="db2-bottom-tile db2-rect" style="display: flex; justify-content: flex-end;">
+        <canvas id="chart23" style="max-width: 420px; max-height: 420px; min-width: 350px; min-height: 350px;"></canvas>
+      </div>
+      <div class="db2-bottom-tile db2-rect" style="display: flex; justify-content: flex-end;">
+        <canvas id="chart24" style="max-width: 420px; max-height: 420px; min-width: 350px; min-height: 350px;"></canvas>
+      </div>
+      <div class="db2-bottom-tile db2-rect" style="display: flex; justify-content: center;">
+        <canvas id="chart25" style="max-width: 420px; max-height: 420px; min-width: 350px; min-height: 350px;"></canvas>
+      </div>
+    </div>
+  </div>
+
+
+  <div style="margin-top: 20px; text-align: center;">
+    <button id="D2-generate-ai-report-button" style="padding: 10px 20px; border-radius: 5px; background-color: var(--card-bg); color: white; border: none; cursor: pointer;">Generate AI Report</button>
+</div>
+  <div id="db2-ai-container" class="db2-rect">
+      <div id="D2-ai-analysis"></div>
+      <button id="D2-retry-ai-analysis" style="margin-top: 10px;">Try Again</button>
+  </div>
+  <div id="D2-input-container" style="display: flex; flex-direction: column; width: 100%; margin-top: 10px;">
+      <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+          <div style="flex: 1;">
+          <input id="D2-ai-response-input" type="text" style=" width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #ccc; " placeholder="Enter your response here">
+          </div>
+
+          <div style="display: flex; margin-left: 5px; width: 400px;">
+          <div class="mb-3">
+              <label for="speech-lang-select"><strong>Select Language for Voice Input:</strong></label>
+              <select class="form-control" id="speech-lang-select" style="max-width: 300px;">
+              <option value="en-US">English (US)</option>
+              <option value="my-MM">Burmese (Myanmar)</option>
+              <option value="zh-CN">Chinese (Mandarin)</option>
+              <option value="th-TH">Thai</option>
+              <option value="ms-MY">Malay</option>
+              <option value="id-ID">Indonesian</option>
+              </select>
+      </div>
+          <button id="D2-text-to-speech" style="width: 100px; height: 50px; padding: 5px 0px 5px 0px; margin-left: 10px; border-radius: 5px; background-color:var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Listen</button>
+          <button id="D2-speech-to-text" style="width: 100px; height: 50px; padding: 5px 0px 5px 0px; margin-left: 10px; border-radius: 5px; background-color:var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Speak</button>
+          </div>
+      </div>
+
+      <div id="db2-last-ai-row" style="display: flex;">
+          <button id="D2-submit-response" style="width: 50%;margin-top: 10px; padding: 10px; border-radius: 5px; background-color: var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Submit</button>
+          
+  </div>
+  </div>
+</body>
+</html>
+
+<!-- Multi-language Speech-to-Text Script -->
+<script>
+    document.querySelectorAll('button[id$="-speech-to-text"]').forEach(button => {
+      button.addEventListener('click', () => {
+        const inputId = button.id.replace('-speech-to-text', '-ai-response-input');
+        const inputElement = document.getElementById(inputId);
+        const langSelector = document.getElementById("speech-lang-select");
+        const selectedLang = langSelector ? langSelector.value : 'en-US';
+  
+        if (!inputElement) return;
+  
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          alert("Your browser does not support Speech Recognition. Please use Chrome.");
+          return;
+        }
+  
+        const recognition = new SpeechRecognition();
+        recognition.lang = selectedLang;
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+  
+        recognition.start();
+  
+        recognition.onresult = function(event) {
+          const transcript = event.results[0][0].transcript;
+          inputElement.value = transcript;
+        };
+  
+        recognition.onerror = function(event) {
+          alert("Speech recognition error: " + event.error);
+        };
+      });
+    });
+  </script>
+<script>
+    import { drawGroupedBarChart, drawMultiLineChart, drawDonutChart } from '../drawChart.js';
+    import { fetchClientRequest, fetchBookingsRequest } from '../APIcaller.js'
+    import { generateMemberVsGeneralData, generate_Barchart_dashboard_1_inYears, generateProfitComparisonData, memberTierDistribution} from '../processData.js';
+    import { generateAiContent } from '../aiAnalysis.js'
+
+// AI START xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+let kpi_for_ai = new Proxy({}, {
+    set(target, key, value) {
+        target[key] = value;
+        // Removed automatic call to updateAIAnalysis()
+        return true;
+    }
+});
+
+document.getElementById('db2-ai-container').style.display = 'none';
+document.getElementById('D2-input-container').style.display = 'none';
+
+document.getElementById('D2-generate-ai-report-button').addEventListener('click', () => {
+    updateAIAnalysis();
+    document.getElementById('D2-input-container').style.display = 'block';
+    document.getElementById('db2-ai-container').style.display = 'block';
+    document.getElementById('D2-generate-ai-report-button').style.display = 'none';
+});
+// Store the last used prompt to use for retries
+let lastUsedPrompt = '';
+
+function updateKpiForAi(key, value) {
+    kpi_for_ai[key] = value;
+}
+async function updateAIAnalysis() {
+    const aiAnalysisElement = document.getElementById('D2-ai-analysis');
+    const retryButton = document.getElementById('D2-retry-ai-analysis');
+    const responseInput = document.getElementById('D2-ai-response-input');
+    const inputTaker = document.getElementById('D2-input-container');
+
+    if (!aiAnalysisElement) return;
+
+    // Hide retry button and input container initially
+    retryButton.style.display = 'none';
+    inputTaker.style.display = 'none';
+
+    // Show loading state
+    aiAnalysisElement.innerHTML = `
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Generating</p>
+        </div>
+    `;
+
+    // Define the default prompt
+    const defaultPrompt = `Generate analytic reports on:
+        "Member vs. General Guest Arrivals: Trends & Future Predictions"
+        "Loyalty vs. Walk-in Guests: Forecasting Booking Behavior"
+        "Guest Segmentation Forecast: Predicting Member and Non-Member Arrivals"`;
+
+    // Determine the prompt to use
+    const userPrompt = responseInput.value.trim();
+    
+    // Update last used prompt, prioritizing user input
+    lastUsedPrompt = userPrompt || lastUsedPrompt || defaultPrompt;
+
+    const chartDataString = Object.values(kpi_for_ai).filter(Boolean).join('\n');
+    const combinedPrompt = `${lastUsedPrompt}\nBased on the following booking data:\n${chartDataString}`;
+
+    try {
+        console.log(`Generating AI content`);
+        
+        // Improved timeout and error handling
+        const generatePromise = generateAiContent('D2-ai-analysis', combinedPrompt, '');
+        
+        const status = await Promise.race([
+            generatePromise,
+            new Promise((_, reject) => setTimeout(() => {
+                console.log(`Timeout`);
+                reject(new Error('Request timeout'));
+            }, 30000))
+        ]);
+
+        console.log(`Status:`, status);
+
+        if (status === 'success') {
+            inputTaker.style.display = 'flex';
+            return;
+        } else {
+            // Log more detailed error information if available
+            const errorDetails = await generatePromise.catch(err => err);
+            console.error(`Detailed error:`, errorDetails);
+            throw new Error('Failed to generate AI content');
+            retryButton.style.display = 'block';
+        }
+    } catch (error) {
+        console.error(`Failed:`, error);
+       
+        aiAnalysisElement.innerHTML = `
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Generating</p>
+            </div>
+        `;
+        inputTaker.style.display = 'none';
+    }
+}
+
+// Event listeners
+document.getElementById('D2-submit-response').addEventListener('click', () => {
+    updateAIAnalysis();
+});
+
+document.getElementById('D2-retry-ai-analysis').addEventListener('click', () => {
+    // Use the last used prompt when retrying
+    const responseInput = document.getElementById('D2-ai-response-input');
+    responseInput.value = lastUsedPrompt;
+    updateAIAnalysis();
+});
+
+document.getElementById('D2-text-to-speech').addEventListener('click', function() {
+    const aiAnalysisElement = document.getElementById('D2-ai-analysis');
+    const text = aiAnalysisElement.textContent || aiAnalysisElement.innerText;
+    const speechButton = this;
+
+    if (speechButton.textContent === 'Listen') {
+        const speech = new SpeechSynthesisUtterance(text);
+        speech.onend = () => {
+            speechButton.textContent = 'Listen';
+        };
+        window.speechSynthesis.speak(speech);
+        speechButton.textContent = 'Stop';
+    } else {
+        window.speechSynthesis.cancel();
+        speechButton.textContent = 'Listen';
+    }
+});
+
+// AI END xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
+    // let currentYear = new Date().getFullYear();
+    // let currentMonth = new Date().getMonth() + 1;
+    let currentYear = 2025;
+    let currentMonth = 3;
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const availableYears = generate_Barchart_dashboard_1_inYears()[0];
+    let bar = true;
+    const Member_Guest_Color = ["#009E73", "#0072B2"];
+    let globalSelectedYear = ''; 
+    let globalSelectedMonth = ''; 
+
+function updateChartForMonth(year, month) {
+    const { labels, datasets, memberNationalities, nonMemberNationalities } = generateMemberVsGeneralData(parseInt(year), parseInt(month));
+    datasets[0].backgroundColor = Member_Guest_Color[0];  // Member color
+    datasets[1].backgroundColor = Member_Guest_Color[1];  // Guest color
+    drawGroupedBarChart('chart21', labels, datasets, `Number of Bookings for ${months[month-1]}, ${year}`);
+    updateKPIs(datasets);
+    updateProfitChart(parseInt(year), parseInt(month));
+    updateKpiForAi('1', ` Here are the lables and datasets for group bar chart ${year},${months[month-1]}: days- ${labels}, dataset for ${datasets[0].label}- ${datasets[0].data}, dataset for ${datasets[1].label}- ${datasets[1].data} `);
+
+    
+    const totalGeneral = datasets[1].data.reduce((sum, current) => sum + current, 0);
+    const totalMembers = datasets[0].data.reduce((sum, current) => sum + current, 0);
+    const total = totalMembers + totalGeneral;
+    const memberRatio = ((totalMembers / total) * 100).toFixed(2);
+    updateKpiForAi('3', ` For the ${year},${months[month-1]}: Total General Guests - ${totalGeneral}, Total Members - ${totalMembers}, Member Ratio - ${memberRatio}`);
+
+    // Draw nationality distribution pie charts
+    drawDonutChart('chart23', Object.keys(memberNationalities), Object.values(memberNationalities), 'Nationality Distribution of Members', 'right');
+    drawDonutChart('chart24', Object.keys(nonMemberNationalities), Object.values(nonMemberNationalities), 'Nationality Distribution of Non-Members', 'right');
+    drawMemberTierDistributionChart(year, month); // Update call to include year and month
+}
+
+function updateChartForYear(year) {
+    const { labels, datasets, memberNationalities, nonMemberNationalities } = generateMemberVsGeneralData(parseInt(year));
+    datasets[0].backgroundColor = Member_Guest_Color[0];  // Member color
+    datasets[1].backgroundColor = Member_Guest_Color[1];  // Guest color
+    drawGroupedBarChart('chart21', labels, datasets, `Number of Bookings for ${year}`);
+    updateKPIs(datasets);
+    updateProfitChart(parseInt(year));
+    updateKpiForAi('1', ` Here are the lables and datasets for group bar chart ${year}: months- ${labels}, dataset for ${datasets[0].label}- ${datasets[0].data}, dataset for ${datasets[1].label}- ${datasets[1].data} `);
+
+    const totalGeneral = datasets[1].data.reduce((sum, current) => sum + current, 0);
+    const totalMembers = datasets[0].data.reduce((sum, current) => sum + current, 0);
+    const total = totalMembers + totalGeneral;
+    const memberRatio = ((totalMembers / total) * 100).toFixed(2);
+    updateKpiForAi('3', ` For the ${year}: Total General Guests - ${totalGeneral}, Total Members - ${totalMembers}, Member Ratio - ${memberRatio}`);
+
+    // Draw nationality distribution pie charts
+    drawDonutChart('chart23', Object.keys(memberNationalities), Object.values(memberNationalities), 'Nationality Distribution of Members', 'right');
+    drawDonutChart('chart24', Object.keys(nonMemberNationalities), Object.values(nonMemberNationalities), 'Nationality Distribution of Non-Members', 'right');
+    drawMemberTierDistributionChart(year); // Update call to include year
+}
+
+function updateChartForYears() {
+    const { labels, datasets, memberNationalities, nonMemberNationalities } = generateMemberVsGeneralData();  // No parameters means get all years
+    datasets[0].backgroundColor = Member_Guest_Color[0];  // Member color
+    datasets[1].backgroundColor = Member_Guest_Color[1];  // Guest color
+    drawGroupedBarChart('chart21', labels, datasets, `Number of Bookings for All years`);
+    updateKPIs(datasets);
+    updateProfitChart();
+    updateKpiForAi('1', ` Here are the lables and datasets for group bar chart for all years: years- ${labels}, dataset for ${datasets[0].label}- ${datasets[0].data}, dataset for ${datasets[1].label}- ${datasets[1].data} `);
+
+    const totalGeneral = datasets[1].data.reduce((sum, current) => sum + current, 0);
+    const totalMembers = datasets[0].data.reduce((sum, current) => sum + current, 0);
+    const total = totalMembers + totalGeneral;
+    const memberRatio = ((totalMembers / total) * 100).toFixed(2);
+    updateKpiForAi('3', ` For all years: Total General Guests - ${totalGeneral}, Total Members - ${totalMembers}, Member Ratio - ${memberRatio}`);
+
+    // Draw nationality distribution pie charts
+    drawDonutChart('chart23', Object.keys(memberNationalities), Object.values(memberNationalities), 'Nationality Distribution of Members', 'right');
+    drawDonutChart('chart24', Object.keys(nonMemberNationalities), Object.values(nonMemberNationalities), 'Nationality Distribution of Non-Members', 'right');
+    drawMemberTierDistributionChart(); // No parameters for all years
+}
+
+function drawMemberTierDistributionChart(year = null, month = null) {
+    const { labels, data } = memberTierDistribution(year, month);
+    drawDonutChart('chart25', labels, data, 'Member Tier Distribution', 'top', ['#FFD700', '#999B9B', '#B9F2FF']);
+}
+
+function updateKPIs(datasets) {
+    const kpiOne = document.getElementById("db2-kpi-one");
+    const kpiTwo = document.getElementById("db2-kpi-two");
+    const kpiThree = document.getElementById("db2-kpi-three");
+
+    // Calculate totals from datasets
+    const totalGeneral = datasets[1].data.reduce((sum, current) => sum + current, 0);
+    const totalMembers = datasets[0].data.reduce((sum, current) => sum + current, 0);
+    
+    const total = totalMembers + totalGeneral;
+    const memberRatio = ((totalMembers / total) * 100).toFixed(2);
+
+    // Update KPI displays
+    kpiOne.innerHTML = `
+        <p>Total General Guests : </p>
+        <p>${totalGeneral}</p>
+    `;
+    
+    kpiTwo.innerHTML = `
+        <p>Total Members :</p>
+        <p>${totalMembers}</p>
+    `;
+    
+    kpiThree.innerHTML = `
+        <p>Member to Guest Ratio: </p>
+        <p>${memberRatio}% of bookings is from member.</p>
+    `;
+}
+
+function updateProfitChart(year, month = null) {
+    const { labels, datasets, title } = generateProfitComparisonData(year, month);
+    datasets[0].borderColor = Member_Guest_Color[0];  // Member color
+    datasets[1].borderColor = Member_Guest_Color[1];  // Guest color
+    drawMultiLineChart('chart22', labels, datasets[0], datasets[1], title);
+    updateKpiForAi('1', ` Here are the lables and datasets for Multiline chart which compare the profits; time labels- ${String(labels)}, dataset for ${String(datasets[0].label)}- ${String(datasets[0].data)}, dataset for ${String(datasets[1].label)}- ${String(datasets[1].data)} `);
+    const totalMemberProfit = datasets[0].data.reduce((sum, current) => sum + current, 0);
+    const totalGeneralProfit = datasets[1].data.reduce((sum, current) => sum + current, 0);
+    const totalProfit = totalMemberProfit + totalGeneralProfit;
+
+    const kpiFour = document.getElementById("db2-kpi-four");
+    const kpiFive = document.getElementById("db2-kpi-five");
+    const kpiSix = document.getElementById("db2-kpi-six");
+
+    kpiFour.innerHTML = `
+        <p>Total Member Profits</p>
+        <p>$${totalMemberProfit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</p>
+    `;
+    
+    kpiFive.innerHTML = `
+        <p>Total General Guest Profits</p>
+        <p>$${totalGeneralProfit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</p>
+    `;
+
+    kpiSix.innerHTML = `
+        <p>Revenue Ratio: </p>
+        <p>Members generate ${((totalMemberProfit / totalProfit) * 100).toFixed(2)}% of the total revenue ($${totalProfit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}).</p>
+    `;
+    updateKpiForAi('4', `Total Member Profits - $${totalMemberProfit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}, Total General Guest Profits - $${totalGeneralProfit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}, Revenue Ratio - ${((totalMemberProfit / totalProfit) * 100).toFixed(2)}% of the total revenue ($${totalProfit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })})`);
+
+}
+// Also update updateChartBasedOnSelection to include the all years view
+function updateChartBasedOnSelection() {
+    if (globalSelectedYear === '' && globalSelectedMonth === '') {
+        updateChartForYears();  // Show data for all years if neither year nor month is selected
+    } else if (globalSelectedYear !== '' && globalSelectedMonth === '') {
+        updateChartForYear(globalSelectedYear);
+    } else {
+        updateChartForMonth(globalSelectedYear, globalSelectedMonth);
+    }
+}
+function handleDropdown() {
+    const chooseYear = document.getElementById("db2-choose-year");
+    const chooseMonth = document.getElementById("db2-choose-month");
+
+    if (!chooseYear || !chooseMonth) {
+        console.error("Dropdown elements not found.");
+        return;
+    }
+
+    // Create dropdown for selecting a year
+    chooseYear.innerHTML = `<option value="" style="text-align: center;">All Years</option>
+    ${availableYears.map(year => `<option value="${year}" style="text-align: center;">${year}</option>`).join('')}`;
+    
+    chooseYear.value = currentYear;  // Set current year as default
+    globalSelectedYear = currentYear;  // Set global selected year to current year
+
+    chooseYear.addEventListener("change", function () {
+        globalSelectedYear = this.value;
+
+        // Reset month selection when a new year is selected
+        globalSelectedMonth = '';
+        chooseMonth.value = ''; 
+        chooseMonth.style.display = globalSelectedYear === "" ? "none" : "inline";
+
+        if (globalSelectedYear !== "") {
+            populateMonthDropdown();
+        }
+
+        updateChartBasedOnSelection();  // Add this line to update chart when year changes
+    });
+
+    // Add month change event listener
+    chooseMonth.addEventListener("change", function () {
+        globalSelectedMonth = this.value;
+        if (this.value === "") {
+            globalSelectedMonth = '';
+        }
+        updateChartBasedOnSelection();  // Update chart when month changes
+    });
+}
+
+
+function populateMonthDropdown() {
+    const chooseMonth = document.getElementById("db2-choose-month");
+
+    if (!chooseMonth) {
+        console.error("Error: 'choose_month' element not found.");
+        return;
+    }
+
+    // Populate the month dropdown
+    chooseMonth.innerHTML = `<option value="" style="text-align: center;">All Months</option>
+        ${months.map((month, index) => `<option value="${index + 1}" style="text-align: center;">${month}</option>`).join('')}`;
+
+    if (bar) {
+        chooseMonth.value = currentMonth;
+        globalSelectedMonth = currentMonth;
+        bar = false;
+        updateChartBasedOnSelection();  // Add this line to update chart on initial load
+    }
+}
+
+
+// Initialize the dashboard
+handleDropdown();
+populateMonthDropdown();
+// Set the chart for the current month and year by default
+updateChartForMonth(currentYear, currentMonth);
+</script>

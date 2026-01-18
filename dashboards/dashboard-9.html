@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .db9-dashboard-container {
+      display: flex;
+      height: min-content;
+      width: 100%;
+      gap: 8px;
+    }
+   
+    .db9-rect {
+      background-color: aliceblue;
+      border: 1px solid black;
+      margin: 2px;
+    }
+   
+    .db9-main-chart {
+      flex: 4;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+   
+    .db9-side-panel {
+      display: flex;
+      flex-direction: column;
+      flex: 2;
+    }
+   
+    .db9-top-row {
+      display: flex;
+      flex-direction: column;
+      flex: 2;
+      max-height: min-content;
+    }
+   
+    .db9-bottom-row {
+      flex: 2;
+      max-height: min-content;
+      display: flex;
+      justify-content: center;
+    }
+   
+    .db9-filter {
+      padding: 10px;
+    }
+   
+    .db9-small-box {
+      flex: 1;
+    }
+    .db9-kpi-visual {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    padding: 6px 15px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    min-height: 80px;
+    position: relative;
+    box-sizing: border-box;
+    }
+
+    #db9-total-income-this-month {
+        border-left: 4px solid #247881;
+        margin-bottom: 25px;
+      }
+
+      #db9-month-over-month-change {
+        border-left: 4px solid #6930c3;
+        margin-bottom: 25px;
+      }
+
+      #db9-income-contribution {
+        border-left: 4px solid #32e0c4;
+        margin-bottom: 25px;
+      }
+
+    .db9-kpi-visual h3 {
+    font-size: 12px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+    width: 100%;
+    text-align: center;
+    }
+
+    .db9-kpi-value {
+    font-size: 16px;
+    font-weight: bold;
+    color: #0080ff;
+    margin: 4px 0;
+    }
+
+    [id^="db9-kpi-trend-"] {
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 2px;
+    text-align: center;
+    }
+
+    #chart92{
+        max-width: 80% !important;
+        height: auto !important;
+    }
+
+    #db9-ai-container {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    #D9-ai-analysis {
+        font-size: 16px;
+        color: #272727;
+        text-align: left;
+    }
+
+    .loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-size: 1.2rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+  </style>
+</head>
+<body>
+  <h4 class="db9-heading">Income Analytics</h4>
+  <div class="db9-dashboard-container">
+    <div class="db9-main-chart db9-rect">
+        <div class="db9-filter">
+            <select id="db9-choose-year"></select>
+            <select id="db9-choose-month"></select>
+          </div>
+      <canvas id="chart91"></canvas>
+    </div>
+    <div class="db9-side-panel">
+      <div class="db9-top-row">
+        <div class="db9-small-box">
+            <div class="db9-kpi-visual" id="db9-total-income-this-month">
+                <h3>Total Revenue</h3>
+                <div class="db9-kpi-value"><span id="total-income-value">0</span></div>
+                <div id="db9-kpi-trend-1"></div>
+            </div>
+        </div>
+        <div class="db9-small-box ">
+            <div class="db9-kpi-visual" id="db9-month-over-month-change">
+                <h3>Revenue Growth</h3>
+                <div class="db9-kpi-value"><span id="mom-change-value">0</span></div>
+                <div id="db9-kpi-trend-2">Month-over-Month Performance</div>
+            </div>
+        </div>
+        <div class="db9-small-box">
+            <div class="db9-kpi-visual" id="db9-income-contribution">
+                <h3>Contribution</h3>
+                <div class="db9-kpi-value"><span id="contribution-value">0</span></div>
+                <div id="db9-kpi-trend-3">Contribution to Annual Revenue</div>
+            </div>
+        </div>
+      </div>
+      <div class="db9-bottom-row db9-rect">
+        <canvas id="chart92" style="width: auto; height: auto;"></canvas>
+    </div>
+    </div>
+  </div>
+
+
+  <div style="margin-top: 20px; text-align: center;">
+    <button id="D9-generate-ai-report-button" style="padding: 10px 20px; border-radius: 5px; background-color: var(--card-bg); color: white; border: none; cursor: pointer;">Generate AI Report</button>
+</div>
+  <div id="db9-ai-container" class="db9-rect">
+      <div id="D9-ai-analysis"></div>
+      <button id="D9-retry-ai-analysis" style="margin-top: 10px;">Try Again</button>
+  </div>
+  <div id="D9-input-container" style="display: flex; flex-direction: column; width: 100%; margin-top: 10px;">
+      <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+          <div style="flex: 1;">
+          <input id="D9-ai-response-input" type="text" style=" width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #ccc; " placeholder="Enter your response here">
+          </div>
+
+          <div style="display: flex; margin-left: 5px; width: 400px;">
+          <div class="mb-3">
+              <label for="speech-lang-select"><strong>Select Language for Voice Input:</strong></label>
+              <select class="form-control" id="speech-lang-select" style="max-width: 300px;">
+              <option value="en-US">English (US)</option>
+              <option value="my-MM">Burmese (Myanmar)</option>
+              <option value="zh-CN">Chinese (Mandarin)</option>
+              <option value="th-TH">Thai</option>
+              <option value="ms-MY">Malay</option>
+              <option value="id-ID">Indonesian</option>
+              </select>
+      </div>
+          <button id="D9-text-to-speech" style="width: 100px; height: 50px; padding: 5px 0px 5px 0px; margin-left: 10px; border-radius: 5px; background-color:var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Listen</button>
+          <button id="D9-speech-to-text" style="width: 100px; height: 50px; padding: 5px 0px 5px 0px; margin-left: 10px; border-radius: 5px; background-color:var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Speak</button>
+          </div>
+      </div>
+
+      <div id="db9-last-ai-row" style="display: flex;">
+          <button id="D9-submit-response" style="width: 50%;margin-top: 10px; padding: 10px; border-radius: 5px; background-color: var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Submit</button>
+          
+  </div>
+  </div>
+</body>
+</html>
+<!-- Multi-language Speech-to-Text Script -->
+<script>
+    document.querySelectorAll('button[id$="-speech-to-text"]').forEach(button => {
+      button.addEventListener('click', () => {
+        const inputId = button.id.replace('-speech-to-text', '-ai-response-input');
+        const inputElement = document.getElementById(inputId);
+        const langSelector = document.getElementById("speech-lang-select");
+        const selectedLang = langSelector ? langSelector.value : 'en-US';
+  
+        if (!inputElement) return;
+  
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          alert("Your browser does not support Speech Recognition. Please use Chrome.");
+          return;
+        }
+  
+        const recognition = new SpeechRecognition();
+        recognition.lang = selectedLang;
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+  
+        recognition.start();
+  
+        recognition.onresult = function(event) {
+          const transcript = event.results[0][0].transcript;
+          inputElement.value = transcript;
+        };
+  
+        recognition.onerror = function(event) {
+          alert("Speech recognition error: " + event.error);
+        };
+      });
+    });
+  </script>
+ 
+<script>
+    import { drawLineChart, drawPieChart } from '../drawChart.js';
+    import { fetchClientRequest, fetchBookingsRequest } from '../APIcaller.js'
+    import { generateRevenueChartData, generate_Barchart_dashboard_1_inYears } from '../processData.js';
+    import { generateAiContent } from '../aiAnalysis.js'
+
+// AI START xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+let kpi_for_ai = new Proxy({}, {
+    set(target, key, value) {
+        target[key] = value;
+        // Removed automatic call to updateAIAnalysis()
+        return true;
+    }
+});
+
+document.getElementById('db9-ai-container').style.display = 'none';
+document.getElementById('D9-input-container').style.display = 'none';
+
+document.getElementById('D9-generate-ai-report-button').addEventListener('click', () => {
+    updateAIAnalysis();
+    document.getElementById('D9-input-container').style.display = 'block';
+    document.getElementById('db9-ai-container').style.display = 'block';
+    document.getElementById('D9-generate-ai-report-button').style.display = 'none';
+});
+
+// Store the last used prompt to use for retries
+let lastUsedPrompt = '';
+
+function updateKpiForAi(key, value) {
+    kpi_for_ai[key] = value;
+}
+async function updateAIAnalysis() {
+    const aiAnalysisElement = document.getElementById('D9-ai-analysis');
+    const retryButton = document.getElementById('D9-retry-ai-analysis');
+    const responseInput = document.getElementById('D9-ai-response-input');
+    const inputTaker = document.getElementById('D9-input-container');
+
+    if (!aiAnalysisElement) return;
+
+    // Hide retry button and input container initially
+    retryButton.style.display = 'none';
+    inputTaker.style.display = 'none';
+
+    // Show loading state
+    aiAnalysisElement.innerHTML = `
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Generating</p>
+        </div>
+    `;
+
+    // Define the default prompt
+    const defaultPrompt = `Generate analytic reports on:
+        "Revenue Forecast: Projected Monthly & Annual Earnings from Bookings"
+        "Hotel Income Outlook: Trends & Predictions for Future Revenue"
+        "Financial Forecast: Expected Growth in Monthly & Yearly Booking Revenue"`;
+
+    // Determine the prompt to use
+    const userPrompt = responseInput.value.trim();
+    
+    // Update last used prompt, prioritizing user input
+    lastUsedPrompt = userPrompt || lastUsedPrompt || defaultPrompt;
+
+    const chartDataString = Object.values(kpi_for_ai).filter(Boolean).join('\n');
+    const combinedPrompt = `${lastUsedPrompt}\nBased on the following booking data:\n${chartDataString}`;
+
+    try {
+        console.log(`Generating AI content`);
+        
+        // Improved timeout and error handling
+        const generatePromise = generateAiContent('D9-ai-analysis', combinedPrompt, '');
+        
+        const status = await Promise.race([
+            generatePromise,
+            new Promise((_, reject) => setTimeout(() => {
+                console.log(`Timeout`);
+                reject(new Error('Request timeout'));
+            }, 30000))
+        ]);
+
+        console.log(`Status:`, status);
+
+        if (status === 'success') {
+            inputTaker.style.display = 'flex';
+            return;
+        } else {
+            // Log more detailed error information if available
+            const errorDetails = await generatePromise.catch(err => err);
+            console.error(`Detailed error:`, errorDetails);
+            throw new Error('Failed to generate AI content');
+            retryButton.style.display = 'block';
+        }
+    } catch (error) {
+        console.error(`Failed:`, error);
+       
+        aiAnalysisElement.innerHTML = `
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Generating</p>
+            </div>
+        `;
+        inputTaker.style.display = 'none';
+    }
+}
+
+// Event listeners
+document.getElementById('D9-submit-response').addEventListener('click', () => {
+    updateAIAnalysis();
+});
+
+document.getElementById('D9-retry-ai-analysis').addEventListener('click', () => {
+    // Use the last used prompt when retrying
+    const responseInput = document.getElementById('D9-ai-response-input');
+    responseInput.value = lastUsedPrompt;
+    updateAIAnalysis();
+});
+
+document.getElementById('D9-text-to-speech').addEventListener('click', function() {
+    const aiAnalysisElement = document.getElementById('D9-ai-analysis');
+    const text = aiAnalysisElement.textContent || aiAnalysisElement.innerText;
+    const speechButton = this;
+
+    if (speechButton.textContent === 'Listen') {
+        const speech = new SpeechSynthesisUtterance(text);
+        speech.onend = () => {
+            speechButton.textContent = 'Listen';
+        };
+        window.speechSynthesis.speak(speech);
+        speechButton.textContent = 'Stop';
+    } else {
+        window.speechSynthesis.cancel();
+        speechButton.textContent = 'Listen';
+    }
+});
+// AI END xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+    // Global variables for state management
+    let globalSelectedYear = '';
+    let globalSelectedMonth = '';
+
+    // let currentYear = new Date().getFullYear();
+    // let currentMonth = new Date().getMonth() + 1;
+    let currentYear = 2025;
+    let currentMonth = 3;
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const availableYears = generate_Barchart_dashboard_1_inYears()[0];
+    let bar = true;
+
+
+
+    function updateKPIs(year, month) {
+    const selectedMonth = document.getElementById('db9-choose-month').value;
+    const selectedYear = document.getElementById('db9-choose-year').value;
+
+    if (selectedYear === '') {
+        // All years view - Calculate total income and year-over-year changes
+        const { labels: years, datasets: [{ data: yearlyTotals }] } = generateRevenueChartData();
+        const totalIncome = yearlyTotals.reduce((sum, value) => sum + value, 0);
+
+        // Get the most recent two years for comparison
+        const lastYear = Math.max(...years.map(Number));
+        const lastYearIndex = years.indexOf(lastYear.toString());
+        const lastYearTotal = yearlyTotals[lastYearIndex];
+        const previousYearTotal = yearlyTotals[lastYearIndex - 1];
+
+        const yearOverYearChange = previousYearTotal === 0 ? 0 : ((lastYearTotal - previousYearTotal) / previousYearTotal * 100);
+        const contribution = totalIncome === 0 ? 0 : (lastYearTotal / totalIncome * 100);
+
+        document.getElementById('total-income-value').textContent = `$${totalIncome.toLocaleString()}`;
+        document.getElementById('mom-change-value').textContent = ` Nothing to compare`;
+        document.getElementById('contribution-value').textContent = `100%`;
+        document.getElementById('db9-kpi-trend-1').textContent = `Total Income Across All Years`;
+        document.getElementById('db9-kpi-trend-2').textContent = ``;
+        document.getElementById('db9-kpi-trend-3').textContent = ``;
+
+        updateKpiForAi('3', `KPI Summary for All Years:
+            - Total Income: $${totalIncome.toLocaleString()}
+            - Year-over-Year Change: ${yearOverYearChange.toFixed(1)}% Comparison with ${lastYear - 1}
+            - Revenue Contribution: ${contribution.toFixed(1)}% of ${lastYear}'s Contribution to Total Revenue`);
+
+
+    } else if (selectedMonth === 'all') {
+        // Monthly view for selected year
+        const { datasets: [{ data: yearData }] } = generateRevenueChartData(parseInt(selectedYear));
+        const yearlyTotal = yearData.reduce((sum, value) => sum + value, 0);
+
+        const { datasets: [{ data: prevYearData }] } = generateRevenueChartData(parseInt(selectedYear) - 1);
+        const previousYearTotal = prevYearData.reduce((sum, value) => sum + value, 0);
+
+        // Get all years data for total calculation
+        const { datasets: [{ data: allYearsData }] } = generateRevenueChartData();
+        const allYearsTotal = allYearsData.reduce((sum, value) => sum + value, 0);
+
+        const yearOverYearChange = previousYearTotal === 0 ? 0 : ((yearlyTotal - previousYearTotal) / previousYearTotal * 100);
+        const contribution = allYearsTotal === 0 ? 0 : (yearlyTotal / allYearsTotal * 100);
+
+        document.getElementById('total-income-value').textContent = `$${yearlyTotal.toLocaleString()}`;
+        document.getElementById('mom-change-value').textContent = `${yearOverYearChange.toFixed(1)}%`;
+        document.getElementById('contribution-value').textContent = `${contribution.toFixed(1)}%`;
+        document.getElementById('db9-kpi-trend-1').textContent = `Total Income for ${selectedYear}`;
+        document.getElementById('db9-kpi-trend-2').textContent = `${selectedYear - 1} vs ${selectedYear}`;
+        document.getElementById('db9-kpi-trend-3').textContent = `of All-time Revenue`;
+        updateKpiForAi('3', `KPI Summary for ${selectedYear}:
+            - Total Income: $${yearlyTotal.toLocaleString()} in Year: ${selectedYear}
+            - Year-over-Year Change: ${yearOverYearChange.toFixed(1)}% Comparison with ${selectedYear - 1}
+            - Revenue Contribution: ${contribution.toFixed(1)}%
+            `);
+
+
+    } else {
+        // Daily view for selected month
+        const { datasets: [{ data: monthData }] } = generateRevenueChartData(parseInt(selectedYear), parseInt(selectedMonth));
+        const totalIncome = monthData.reduce((sum, value) => sum + value, 0);
+
+        const previousMonth = parseInt(selectedMonth) === 1 ? 12 : parseInt(selectedMonth) - 1;
+        const previousYear = parseInt(selectedMonth) === 1 ? parseInt(selectedYear) - 1 : parseInt(selectedYear);
+        const { datasets: [{ data: prevMonthData }] } = generateRevenueChartData(previousYear, previousMonth);
+        const previousMonthTotal = prevMonthData.reduce((sum, value) => sum + value, 0);
+
+        // Get yearly total for contribution calculation
+        const { datasets: [{ data: yearData }] } = generateRevenueChartData(parseInt(selectedYear));
+        const yearlyTotal = yearData.reduce((sum, value) => sum + value, 0);
+
+        const momChange = previousMonthTotal === 0 ? 0 : ((totalIncome - previousMonthTotal) / previousMonthTotal * 100);
+        const contribution = yearlyTotal === 0 ? 0 : (totalIncome / yearlyTotal * 100);
+
+        document.getElementById('total-income-value').textContent = `$${totalIncome.toLocaleString()}`;
+        document.getElementById('mom-change-value').textContent = `${momChange.toFixed(1)}%`;
+        document.getElementById('contribution-value').textContent = `${contribution.toFixed(1)}%`;
+        document.getElementById('db9-kpi-trend-1').textContent = `Total Income for ${months[parseInt(selectedMonth)-1]} ${selectedYear}`;
+        document.getElementById('db9-kpi-trend-2').textContent = `vs ${months[previousMonth-1]} ${previousYear}`;
+        document.getElementById('db9-kpi-trend-3').textContent = `of ${selectedYear} Revenue`;
+        updateKpiForAi('3', `KPI Summary for ${months[parseInt(selectedMonth)-1]} ${selectedYear}:
+            - Total Income: $${totalIncome.toLocaleString()} in ${selectedYear}, ${months[parseInt(selectedMonth)-1]}
+            - Month-over-Month Change: ${momChange.toFixed(1)}% Comparison with ${months[previousMonth-1]} ${previousYear}
+            - Revenue Contribution: ${contribution.toFixed(1)}% Contribution to ${selectedYear} Revenue
+            `);
+    }
+}
+
+function updateCharts(year = currentYear, month = currentMonth) {
+    const selectedMonth = document.getElementById('db9-choose-month').value;
+    const selectedYear = document.getElementById('db9-choose-year').value;
+
+    // Line Chart Update
+    if (selectedYear === '') {
+        // All years view
+        const { labels, datasets: [{ data }] } = generateRevenueChartData();
+        drawLineChart( "chart91",labels, data, "Yearly Revenue Trends");
+        updateKPIs();
+        updateKpiForAi('1', `This is the profit recorded for All time; years:profits, `);
+        updateKpiForAi('2', `${data.map((value, index) => `${labels[index]}: $${value.toLocaleString()}`).join('\n')} `);
+        
+
+    } else if (selectedMonth === 'all') {
+        // Monthly view for selected year
+        const { labels, datasets: [{ data }] } = generateRevenueChartData(parseInt(selectedYear));
+        drawLineChart( "chart91",labels, data, `Monthly Revenue Trends for ${selectedYear}`);
+        updateKPIs();
+        updateKpiForAi('1', `This is the profit recorded for each month in ${selectedYear}; month:profits, `);
+        updateKpiForAi('2', `${data.map((value, index) => `${labels[index]}: $${value.toLocaleString()}`).join('\n')} `);
+
+    } else {
+        // Daily view for selected month
+        const { labels, datasets: [{ data }] } = generateRevenueChartData(parseInt(selectedYear), parseInt(selectedMonth));
+        drawLineChart( "chart91",labels, data, `Daily Revenue for ${months[parseInt(selectedMonth)-1]} ${selectedYear}`);
+        updateKpiForAi('1', `This is the profit recorded for each day in ${months[parseInt(selectedMonth)-1]}, ${selectedYear}; day:profits, `);
+        updateKpiForAi('2', `${data.map((value, index) => `${labels[index]}: $${value.toLocaleString()}`).join('\n')} `);
+        updateKPIs();
+    }
+
+    // Pie Chart Update
+    let pieChartLabels, pieChartData;
+    if (selectedYear === '') {
+        // Distribution across years
+        const { labels, datasets: [{ data }] } = generateRevenueChartData();
+        pieChartLabels = labels;
+        pieChartData = data;
+    } else {
+        // Distribution across months for selected year
+        const { labels, datasets: [{ data }] } = generateRevenueChartData(parseInt(selectedYear));
+        
+        // Filter out months with zero revenue
+        const nonZeroData = data.map((value, index) => ({ value, month: labels[index] }))
+            .filter(item => item.value > 0);
+
+        pieChartLabels = nonZeroData.map(item => item.month);
+        pieChartData = nonZeroData.map(item => item.value);
+    }
+
+    drawPieChart( "chart92",pieChartLabels, pieChartData, `Profit distribution of ${globalSelectedYear || 'All time'}`, 'top');
+    updateKPIs();
+}
+
+
+function handleDropdown() {
+    const chooseYear = document.getElementById("db9-choose-year");
+    const chooseMonth = document.getElementById("db9-choose-month");
+
+    if (!chooseYear || !chooseMonth) {
+        console.error("Dropdown elements not found.");
+        return;
+    }
+
+    chooseYear.innerHTML = `<option value="" style="text-align: center;">All Years</option>
+    ${availableYears.map(year => `<option value="${year}" style="text-align: center;">${year}</option>`).join('')}`;
+    
+    chooseYear.value = currentYear;
+    globalSelectedYear = currentYear;
+
+    chooseYear.addEventListener("change", function () {
+        globalSelectedYear = this.value;
+        globalSelectedMonth = '';
+        chooseMonth.value = '';
+        chooseMonth.style.display = globalSelectedYear === "" ? "none" : "inline";
+
+        if (globalSelectedYear !== "") {
+            populateMonthDropdown();
+        }
+
+        updateCharts(parseInt(globalSelectedYear), globalSelectedMonth ? parseInt(globalSelectedMonth) : currentMonth);
+    });
+
+    chooseMonth.addEventListener("change", function () {
+        globalSelectedMonth = this.value;
+        updateCharts(parseInt(globalSelectedYear), parseInt(globalSelectedMonth));
+    });
+}
+
+function populateMonthDropdown() {
+    const chooseMonth = document.getElementById("db9-choose-month");
+
+    if (!chooseMonth) {
+        console.error("Error: 'db9-choose-month' element not found.");
+        return;
+    }
+
+    chooseMonth.innerHTML = `<option value="all" style="text-align: center;">All Months</option>
+        ${months.map((month, index) => `<option value="${index + 1}" style="text-align: center;">${month}</option>`).join('')}`;
+
+    if (bar) {
+        chooseMonth.value = currentMonth;
+        globalSelectedMonth = currentMonth;
+        bar = false;
+        updateCharts(parseInt(globalSelectedYear), parseInt(globalSelectedMonth));
+    }
+}
+
+// Initialize the dashboard
+handleDropdown();
+populateMonthDropdown();
+updateCharts(currentYear, currentMonth);
+
+// Helper function to get days in month
+function getDaysInMonth(year, month) {
+    return new Date(year, month, 0).getDate();
+}
+
+
+</script>

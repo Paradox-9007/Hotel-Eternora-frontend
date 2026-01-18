@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .db8-dashboard-container {
+      display: flex;
+      flex-direction: column;
+      min-height: min-content;
+      width: 100%;
+    }
+    
+    .db8-rect {
+      background-color: aliceblue;
+      border: 1px solid black;
+      margin: 2px;
+    }
+    
+    .db8-main-section {
+      flex: 6;
+      width: 100%;
+      max-height: min-content;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .db8-filter{
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px;
+        margin-right: 10px;
+        gap: 10px;
+    }
+    
+    .db8-middle-row {
+      display: flex;
+      flex: 2;
+      margin-top: 20px;
+    }
+    
+    .db8-bottom-row {
+      display: flex;
+      flex: 2;
+      margin-top: 15px;
+    }
+    
+    .db8-tile {
+      flex: 1;
+    }
+
+    .db8-kpi-box {
+        background-color: white;
+        border-radius: 8px;
+        padding: 6px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        min-height: 60px;
+    }
+
+
+    #db8-ai-container {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    #D8-ai-analysis {
+        font-size: 16px;
+        color: #272727;
+        text-align: left;
+    }
+
+    .loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-size: 1.2rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+  </style>
+</head>
+<body>
+    <h4 class="db8-heading">Most frequently Booked Units Analytics</h4>
+    <div class="db8-dashboard-container">
+      <div class="db8-main-section db8-rect">
+      <div class="db8-filter">
+          <select id="db8-choose-year"></select>
+          <select id="db8-choose-month"></select>
+      </div>
+        <canvas id="chart81" style="max-width: auto; max-height: auto;"></canvas>
+      </div>
+    
+    <div class="db8-middle-row">
+      <div class="rounded db8-tile db8-rect"><div id="top1" class="db8-kpi-box"></div></div>
+      <div class="rounded db8-tile db8-rect"><div id="top2" class="db8-kpi-box"></div></div>
+      <div class="rounded db8-tile db8-rect"><div id="top3" class="db8-kpi-box"></div></div>
+      <div class="rounded db8-tile db8-rect"><div id="top4" class="db8-kpi-box"></div></div>
+      <div class="rounded db8-tile db8-rect"><div id="top5" class="db8-kpi-box"></div></div>
+    </div>
+
+    <div class="db8-bottom-row">
+      <div class="rounded db8-tile db8-rect"><div id="top6" class="db8-kpi-box"></div></div>
+      <div class="rounded db8-tile db8-rect"><div id="top7" class="db8-kpi-box"></div></div>
+      <div class="rounded db8-tile db8-rect"><div id="top8" class="db8-kpi-box"></div></div>
+      <div class="rounded db8-tile db8-rect"><div id="top9" class="db8-kpi-box"></div></div>
+      <div class="rounded db8-tile db8-rect"><div id="top10" class="db8-kpi-box"></div></div>
+    </div>
+  </div>
+
+
+  <div style="margin-top: 20px; text-align: center;">
+    <button id="D8-generate-ai-report-button" style="padding: 10px 20px; border-radius: 5px; background-color: var(--card-bg); color: white; border: none; cursor: pointer;">Generate AI Report</button>
+</div>
+  <div id="db8-ai-container" class="db8-rect">
+      <div id="D8-ai-analysis"></div>
+      <button id="D8-retry-ai-analysis" style="margin-top: 10px;">Try Again</button>
+  </div>
+  <div id="D8-input-container" style="display: flex; flex-direction: column; width: 100%; margin-top: 10px;">
+      <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+          <div style="flex: 1;">
+          <input id="D8-ai-response-input" type="text" style=" width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #ccc; " placeholder="Enter your response here">
+          </div>
+
+          <div style="display: flex; margin-left: 5px; width: 400px;">
+          <div class="mb-3">
+              <label for="speech-lang-select"><strong>Select Language for Voice Input:</strong></label>
+              <select class="form-control" id="speech-lang-select" style="max-width: 300px;">
+              <option value="en-US">English (US)</option>
+              <option value="my-MM">Burmese (Myanmar)</option>
+              <option value="zh-CN">Chinese (Mandarin)</option>
+              <option value="th-TH">Thai</option>
+              <option value="ms-MY">Malay</option>
+              <option value="id-ID">Indonesian</option>
+              </select>
+      </div>
+          <button id="D8-text-to-speech" style="width: 100px; height: 50px; padding: 5px 0px 5px 0px; margin-left: 10px; border-radius: 5px; background-color:var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Listen</button>
+          <button id="D8-speech-to-text" style="width: 100px; height: 50px; padding: 5px 0px 5px 0px; margin-left: 10px; border-radius: 5px; background-color:var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Speak</button>
+          </div>
+      </div>
+
+      <div id="db8-last-ai-row" style="display: flex;">
+          <button id="D8-submit-response" style="width: 50%;margin-top: 10px; padding: 10px; border-radius: 5px; background-color: var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Submit</button>
+          
+  </div>
+  </div>
+</body>
+</html>
+<!-- Multi-language Speech-to-Text Script -->
+<script>
+    document.querySelectorAll('button[id$="-speech-to-text"]').forEach(button => {
+      button.addEventListener('click', () => {
+        const inputId = button.id.replace('-speech-to-text', '-ai-response-input');
+        const inputElement = document.getElementById(inputId);
+        const langSelector = document.getElementById("speech-lang-select");
+        const selectedLang = langSelector ? langSelector.value : 'en-US';
+  
+        if (!inputElement) return;
+  
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          alert("Your browser does not support Speech Recognition. Please use Chrome.");
+          return;
+        }
+  
+        const recognition = new SpeechRecognition();
+        recognition.lang = selectedLang;
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+  
+        recognition.start();
+  
+        recognition.onresult = function(event) {
+          const transcript = event.results[0][0].transcript;
+          inputElement.value = transcript;
+        };
+  
+        recognition.onerror = function(event) {
+          alert("Speech recognition error: " + event.error);
+        };
+      });
+    });
+  </script>
+ 
+<script>
+    import { drawHorizontalBarChart } from '../drawChart.js';
+    import { fetchClientRequest, fetchBookingsRequest } from '../APIcaller.js'
+    import { generateUnitPerformanceData,generate_Barchart_dashboard_1_inYears } from '../processData.js';
+    import { generateAiContent } from '../aiAnalysis.js'
+
+// AI START xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+let kpi_for_ai = new Proxy({}, {
+    set(target, key, value) {
+        target[key] = value;
+        // Removed automatic call to updateAIAnalysis()
+        return true;
+    }
+});
+
+document.getElementById('db8-ai-container').style.display = 'none';
+document.getElementById('D8-input-container').style.display = 'none';
+
+document.getElementById('D8-generate-ai-report-button').addEventListener('click', () => {
+    updateAIAnalysis();
+    document.getElementById('D8-input-container').style.display = 'block';
+    document.getElementById('db8-ai-container').style.display = 'block';
+    document.getElementById('D8-generate-ai-report-button').style.display = 'none';
+});
+
+// Store the last used prompt to use for retries
+let lastUsedPrompt = '';
+
+function updateKpiForAi(key, value) {
+    kpi_for_ai[key] = value;
+}
+async function updateAIAnalysis() {
+    const aiAnalysisElement = document.getElementById('D8-ai-analysis');
+    const retryButton = document.getElementById('D8-retry-ai-analysis');
+    const responseInput = document.getElementById('D8-ai-response-input');
+    const inputTaker = document.getElementById('D8-input-container');
+
+    if (!aiAnalysisElement) return;
+
+    // Hide retry button and input container initially
+    retryButton.style.display = 'none';
+    inputTaker.style.display = 'none';
+
+    // Show loading state
+    aiAnalysisElement.innerHTML = `
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Generating</p>
+        </div>
+    `;
+
+    // Define the default prompt
+    const defaultPrompt = `Generate analytic reports on:
+        "Top-Performing Rooms: Predicting Next Month’s Most Booked Units"
+        "Future Booking Demand: Rooms Expected to Be in High Demand"
+        "Guest Preferences Forecast: Anticipated High-Demand Units"`;
+
+    // Determine the prompt to use
+    const userPrompt = responseInput.value.trim();
+    
+    // Update last used prompt, prioritizing user input
+    lastUsedPrompt = userPrompt || lastUsedPrompt || defaultPrompt;
+
+    const chartDataString = Object.values(kpi_for_ai).filter(Boolean).join('\n');
+    const combinedPrompt = `${lastUsedPrompt}\nBased on the following booking data:\n${chartDataString}`;
+
+    try {
+        console.log(`Generating AI content`);
+        
+        // Improved timeout and error handling
+        const generatePromise = generateAiContent('D8-ai-analysis', combinedPrompt, '');
+        
+        const status = await Promise.race([
+            generatePromise,
+            new Promise((_, reject) => setTimeout(() => {
+                console.log(`Timeout`);
+                reject(new Error('Request timeout'));
+            }, 30000))
+        ]);
+
+        console.log(`Status:`, status);
+
+        if (status === 'success') {
+            inputTaker.style.display = 'flex';
+            return;
+        } else {
+            // Log more detailed error information if available
+            const errorDetails = await generatePromise.catch(err => err);
+            console.error(`Detailed error:`, errorDetails);
+            throw new Error('Failed to generate AI content');
+            retryButton.style.display = 'block';
+        }
+    } catch (error) {
+        console.error(`Failed:`, error);
+       
+        aiAnalysisElement.innerHTML = `
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Generating</p>
+            </div>
+        `;
+        inputTaker.style.display = 'none';
+    }
+}
+
+// Event listeners
+document.getElementById('D8-submit-response').addEventListener('click', () => {
+    updateAIAnalysis();
+});
+
+document.getElementById('D8-retry-ai-analysis').addEventListener('click', () => {
+    // Use the last used prompt when retrying
+    const responseInput = document.getElementById('D8-ai-response-input');
+    responseInput.value = lastUsedPrompt;
+    updateAIAnalysis();
+});
+
+document.getElementById('D8-text-to-speech').addEventListener('click', function() {
+    const aiAnalysisElement = document.getElementById('D8-ai-analysis');
+    const text = aiAnalysisElement.textContent || aiAnalysisElement.innerText;
+    const speechButton = this;
+
+    if (speechButton.textContent === 'Listen') {
+        const speech = new SpeechSynthesisUtterance(text);
+        speech.onend = () => {
+            speechButton.textContent = 'Listen';
+        };
+        window.speechSynthesis.speak(speech);
+        speechButton.textContent = 'Stop';
+    } else {
+        window.speechSynthesis.cancel();
+        speechButton.textContent = 'Listen';
+    }
+});
+
+// AI END xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+// Example inputs for drawHorizontalBarChart function
+
+// Add these global variables at the top
+let globalSelectedYear = '';
+let globalSelectedMonth = '';
+// let currentYear = new Date().getFullYear();
+// let currentMonth = new Date().getMonth() + 1;
+let currentYear = 2025;
+let currentMonth = 3;
+const availableYears = generate_Barchart_dashboard_1_inYears()[0];
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+let bar = true;
+
+
+// Function to update revenue KPIs
+function updateRevenueKPIs(sortedByRevenue, periodLabel = '') {
+    // Get only top 10 units
+    const top10Units = sortedByRevenue.slice(0, 10);
+    
+    // Update KPIs for all possible positions (1-10)
+    let kpiDataForAI = [];
+    for (let i = 0; i < 10; i++) {
+        const element = document.getElementById(`top${i + 1}`);
+        if (element) {
+            if (i < top10Units.length) {
+                const unit = top10Units[i];
+                element.innerHTML = `
+                    <div class="unit-kpi" style="padding: 0px; border-radius: 8px; background-color: transparent; margin-bottom: 8px;">
+                        <div style="color: #0066cc; font-size: 12px; margin-bottom: 5px;"><b>Top ${i + 1}</b></div>
+                        <div style="color: #333; font-size: 14px; margin-bottom: 8px;"><strong>${unit.label}</strong></div>
+                        <div style="color: #28a745; margin-bottom: 4px;">Revenue: <span style="font-weight: bold;">$${unit.revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                        <div style="color: #6c757d; margin-bottom: 4px;">Stay Duration: <span style="font-weight: bold;">${unit.days} days</span></div>
+                        <div style="color: #17a2b8; margin-bottom: 4px;">Total Bookings: <span style="font-weight: bold;">${unit.bookings} times</span></div>
+                        ${periodLabel ? `<div style="color: #6c757d; font-size: 10px; margin-top: 5px;"><small>${periodLabel}</small></div>` : ''}
+                    </div>
+                `;
+                // Collect data for AI analysis
+                kpiDataForAI.push(`Unit ${unit.label}: Revenue $${unit.revenue.toFixed(2)}, Stay Duration ${unit.days} days, Total Bookings ${unit.bookings} times`);
+            } else {
+                element.innerHTML = `
+                    <div class="unit-kpi" style="padding: 0px; border-radius: 8px; background-color: transparent; margin-bottom: 8px;">
+                        <div style="color: #6c757d; text-align: center; font-style: italic;">No data available</div>
+                    </div>
+                `;
+            }
+        }
+    }
+    updateKpiForAi("2", `Detailed performance metrics for top units: \n${kpiDataForAI.join('\n')}`);
+
+}
+
+// Function to update the chart
+function updatePerformanceChart(top10Units) {
+    const labels = top10Units.map(unit => unit.label);
+    const data = top10Units.map(unit => unit.bookings);
+    drawHorizontalBarChart('chart81', labels, data);
+
+    updateKpiForAi("1", `This is the top ten Most Frequently booked units within ${globalSelectedYear ? globalSelectedYear : 'all time'}${globalSelectedMonth ? `, ${months[globalSelectedMonth - 1]}` : ''}. The ID of the Room Units- ${labels} , the number of times the Unites being booked- ${data}`);
+
+
+}
+
+// Function to sort and prepare data
+function prepareData(unitData) {
+    return [...unitData.labels]
+        .map((label, index) => ({
+            label,
+            revenue: unitData.datasets[0].data[index],
+            bookings: unitData.datasets[1].data[index],
+            days: unitData.datasets[2].data[index]
+        }))
+        .sort((a, b) => {
+            // First, compare by number of bookings
+            if (b.bookings !== a.bookings) {
+                return b.bookings - a.bookings;
+            }
+            // If bookings are equal, compare by revenue
+            return b.revenue - a.revenue;
+        })
+        .slice(0, 10); // Get only top 10
+}
+
+// Main function to update dashboard
+function updateDashboard(year = null, month = null) {
+    const unitData = generateUnitPerformanceData(
+        year ? parseInt(year) : null,
+        month ? parseInt(month) : null
+    );
+    const sortedByRevenue = prepareData(unitData);
+    updateRevenueKPIs(sortedByRevenue);
+    updatePerformanceChart(sortedByRevenue);
+}
+
+function handleDropdown() {
+    const chooseYear = document.getElementById("db8-choose-year");
+    const chooseMonth = document.getElementById("db8-choose-month");
+
+    if (!chooseYear || !chooseMonth) {
+        console.error("Dropdown elements not found.");
+        return;
+    }
+
+    // Create dropdown for selecting a year
+    chooseYear.innerHTML = `<option value="" style="text-align: center;">All Years</option>
+    ${availableYears.map(year => `<option value="${year}" style="text-align: center;">${year}</option>`).join('')}`;
+    
+    chooseYear.value = currentYear;
+    globalSelectedYear = currentYear;
+
+    chooseYear.addEventListener("change", function () {
+        globalSelectedYear = this.value;
+        
+        // Reset month selection when a new year is selected
+        globalSelectedMonth = '';
+        chooseMonth.value = '';
+        chooseMonth.style.display = globalSelectedYear === "" ? "none" : "inline";
+
+        if (globalSelectedYear !== "") {
+            populateMonthDropdown();
+        }
+
+        // Update dashboard with new data
+        updateDashboard(
+            globalSelectedYear || null,
+            globalSelectedMonth || null
+        );
+    });
+
+    chooseMonth.addEventListener("change", function () {
+        globalSelectedMonth = this.value;
+        if (this.value === "") {
+            globalSelectedMonth = '';
+        }
+
+        // Update dashboard with new data
+        updateDashboard(
+            globalSelectedYear || null,
+            globalSelectedMonth || null
+        );
+    });
+}
+
+function populateMonthDropdown() {
+    const chooseMonth = document.getElementById("db8-choose-month");
+
+    if (!chooseMonth) {
+        console.error("Error: 'db8-choose-month' element not found.");
+        return;
+    }
+
+    chooseMonth.innerHTML = `<option value="" style="text-align: center;">All Months</option>
+        ${months.map((month, index) => `<option value="${index + 1}" style="text-align: center;">${month}</option>`).join('')}`;
+
+    if (bar) {
+        chooseMonth.value = currentMonth;
+        globalSelectedMonth = currentMonth;
+        bar = false;
+        
+    }
+}
+
+// Initialize dashboard
+handleDropdown();
+populateMonthDropdown();
+updateDashboard(currentYear, currentMonth); // Initial load with current date
+
+
+</script>

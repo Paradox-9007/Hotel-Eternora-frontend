@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .db4-dashboard-container {
+      display: flex;
+      flex-direction: column;
+      height: 95vh;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    
+    .db4-rect {
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      margin: 10px;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .db4-top-row,
+    .db4-bottom-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: stretch; /* Ensure all children have the same height */
+        min-height: max-content;
+    }
+    
+    .db4-middle-section {
+      flex: 4;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      max-height: 600px;
+      margin: 10px 0;
+    }
+    
+    .db4-tile {
+      flex: 1;
+      margin: 0 10px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .db4-filter {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .db4-filter select {
+      margin: 0 5px;
+      padding: 16px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      font-size: 16px;
+    }
+    
+    h5 {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 5px;
+      text-align: center;
+    }
+    
+    p {
+      font-size: 24px;
+      font-weight: bold;
+      color: #007bff;
+      margin: 0;
+      text-align: center;
+    }
+    
+    small {
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+    }
+
+    #db4-ai-container {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    #D4-ai-analysis {
+        font-size: 16px;
+        color: #272727;
+        text-align: left;
+        width: 100%;
+    }
+
+    .loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-size: 1.2rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+  </style>
+</head>
+<body>
+  <h4>Occupancy rate and Average Daily Rate calculation</h4>
+  <div class="db4-dashboard-container">
+    <div class="db4-top-row">
+      <div class="db4-tile db4-rect" id="db4-kpi-1">KPI 1</div>
+      <div class="db4-tile db4-rect" id="db4-kpi-2">KPI 2</div>
+      <div class="db4-tile db4-rect">
+        <div class="db4-filter">
+            <select id="db4-choose-year"></select>
+            <select id="db4-choose-month"></select>
+        </div>
+      </div>
+    </div>
+    <div class="db4-middle-section db4-rect">
+      <canvas id="chart41" style="width: auto; height: auto; max-height: 500px;"></canvas>
+    </div>
+    <div class="db4-bottom-row">
+      <div class="db4-tile db4-rect" id="db4-kpi-3">KPI 3</div>
+      <div class="db4-tile db4-rect" id="db4-kpi-4">KPI 4</div>
+      <div class="db4-tile db4-rect" id="db4-kpi-5">KPI 5</div>
+    </div>
+  </div>
+
+
+  <div style="margin-top: 20px; text-align: center;">
+    <button id="D4-generate-ai-report-button" style="padding: 10px 20px; border-radius: 5px; background-color: var(--card-bg); color: white; border: none; cursor: pointer;">Generate AI Report</button>
+</div>
+  <div id="db4-ai-container" class="db4-rect">
+      <div id="D4-ai-analysis"></div>
+      <button id="D4-retry-ai-analysis" style="margin-top: 10px;">Try Again</button>
+  </div>
+  <div id="D4-input-container" style="display: flex; flex-direction: column; width: 100%; margin-top: 10px;">
+      <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+          <div style="flex: 1;">
+          <input id="D4-ai-response-input" type="text" style=" width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #ccc; " placeholder="Enter your response here">
+          </div>
+
+          <div style="display: flex; margin-left: 5px; width: 400px;">
+          <div class="mb-3">
+              <label for="speech-lang-select"><strong>Select Language for Voice Input:</strong></label>
+              <select class="form-control" id="speech-lang-select" style="max-width: 300px;">
+              <option value="en-US">English (US)</option>
+              <option value="my-MM">Burmese (Myanmar)</option>
+              <option value="zh-CN">Chinese (Mandarin)</option>
+              <option value="th-TH">Thai</option>
+              <option value="ms-MY">Malay</option>
+              <option value="id-ID">Indonesian</option>
+              </select>
+      </div>
+          <button id="D4-text-to-speech" style="width: 100px; height: 50px; padding: 5px 0px 5px 0px; margin-left: 10px; border-radius: 5px; background-color:var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Listen</button>
+          <button id="D4-speech-to-text" style="width: 100px; height: 50px; padding: 5px 0px 5px 0px; margin-left: 10px; border-radius: 5px; background-color:var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Speak</button>
+          </div>
+      </div>
+
+      <div id="db4-last-ai-row" style="display: flex;">
+          <button id="D4-submit-response" style="width: 50%;margin-top: 10px; padding: 10px; border-radius: 5px; background-color: var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Submit</button>
+          
+  </div>
+  </div>
+</body>
+</html>
+<!-- Multi-language Speech-to-Text Script -->
+<script>
+    document.querySelectorAll('button[id$="-speech-to-text"]').forEach(button => {
+      button.addEventListener('click', () => {
+        const inputId = button.id.replace('-speech-to-text', '-ai-response-input');
+        const inputElement = document.getElementById(inputId);
+        const langSelector = document.getElementById("speech-lang-select");
+        const selectedLang = langSelector ? langSelector.value : 'en-US';
+  
+        if (!inputElement) return;
+  
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          alert("Your browser does not support Speech Recognition. Please use Chrome.");
+          return;
+        }
+  
+        const recognition = new SpeechRecognition();
+        recognition.lang = selectedLang;
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+  
+        recognition.start();
+  
+        recognition.onresult = function(event) {
+          const transcript = event.results[0][0].transcript;
+          inputElement.value = transcript;
+        };
+  
+        recognition.onerror = function(event) {
+          alert("Speech recognition error: " + event.error);
+        };
+      });
+    });
+  </script>
+ 
+<script>
+    import { drawComboChart } from "../drawChart.js";
+    import { fetchClientRequest, fetchBookingsRequest } from '../APIcaller.js'
+    import { getMonthlyOccupancyAndADR, generate_Barchart_dashboard_1_inYears, getTotalRooms} from '../processData.js';
+    import { generateAiContent } from '../aiAnalysis.js'
+
+// AI START xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+let kpi_for_ai = new Proxy({}, {
+    set(target, key, value) {
+        target[key] = value;
+        // Removed automatic call to updateAIAnalysis()
+        return true;
+    }
+});
+
+document.getElementById('db4-ai-container').style.display = 'none';
+document.getElementById('D4-input-container').style.display = 'none';
+
+document.getElementById('D4-generate-ai-report-button').addEventListener('click', () => {
+    updateAIAnalysis();
+    document.getElementById('D4-input-container').style.display = 'block';
+    document.getElementById('db4-ai-container').style.display = 'block';
+    document.getElementById('D4-generate-ai-report-button').style.display = 'none';
+});
+// Store the last used prompt to use for retries
+let lastUsedPrompt = '';
+
+function updateKpiForAi(key, value) {
+    kpi_for_ai[key] = value;
+}
+async function updateAIAnalysis() {
+    const aiAnalysisElement = document.getElementById('D4-ai-analysis');
+    const retryButton = document.getElementById('D4-retry-ai-analysis');
+    const responseInput = document.getElementById('D4-ai-response-input');
+    const inputTaker = document.getElementById('D4-input-container');
+
+    if (!aiAnalysisElement) return;
+
+    // Hide retry button and input container initially
+    retryButton.style.display = 'none';
+    inputTaker.style.display = 'none';
+
+    // Show loading state
+    aiAnalysisElement.innerHTML = `
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Generating</p>
+        </div>
+    `;
+
+    // Define the default prompt
+    const defaultPrompt = `Generate analytic reports on:
+      "Occupancy & ADR Forecast: Monthly Performance & Future Outlook"
+      "Revenue & Room Utilization: Projected Occupancy and ADR Trends"
+      "Hotel Profitability Forecast: Predicting Occupancy & ADR Changes"`;
+
+    // Determine the prompt to use
+    const userPrompt = responseInput.value.trim();
+    
+    // Update last used prompt, prioritizing user input
+    lastUsedPrompt = userPrompt || lastUsedPrompt || defaultPrompt;
+
+    const chartDataString = Object.values(kpi_for_ai).filter(Boolean).join('\n');
+    const combinedPrompt = `${lastUsedPrompt}\nBased on the following booking data:\n${chartDataString}`;
+
+    try {
+        console.log(`Generating AI content`);
+        
+        // Improved timeout and error handling
+        const generatePromise = generateAiContent('D4-ai-analysis', combinedPrompt, '');
+        
+        const status = await Promise.race([
+            generatePromise,
+            new Promise((_, reject) => setTimeout(() => {
+                console.log(`Timeout`);
+                reject(new Error('Request timeout'));
+            }, 30000))
+        ]);
+
+        console.log(`Status:`, status);
+
+        if (status === 'success') {
+            inputTaker.style.display = 'flex';
+            return;
+        } else {
+            // Log more detailed error information if available
+            const errorDetails = await generatePromise.catch(err => err);
+            console.error(`Detailed error:`, errorDetails);
+            throw new Error('Failed to generate AI content');
+            retryButton.style.display = 'block';
+        }
+    } catch (error) {
+        console.error(`Failed:`, error);
+       
+        aiAnalysisElement.innerHTML = `
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Generating</p>
+            </div>
+        `;
+        inputTaker.style.display = 'none';
+    }
+}
+
+// Event listeners
+document.getElementById('D4-submit-response').addEventListener('click', () => {
+    updateAIAnalysis();
+});
+
+document.getElementById('D4-retry-ai-analysis').addEventListener('click', () => {
+    // Use the last used prompt when retrying
+    const responseInput = document.getElementById('D4-ai-response-input');
+    responseInput.value = lastUsedPrompt;
+    updateAIAnalysis();
+});
+
+document.getElementById('D4-text-to-speech').addEventListener('click', function() {
+    const aiAnalysisElement = document.getElementById('D4-ai-analysis');
+    const text = aiAnalysisElement.textContent || aiAnalysisElement.innerText;
+    const speechButton = this;
+
+    if (speechButton.textContent === 'Listen') {
+        const speech = new SpeechSynthesisUtterance(text);
+        speech.onend = () => {
+            speechButton.textContent = 'Listen';
+        };
+        window.speechSynthesis.speak(speech);
+        speechButton.textContent = 'Stop';
+    } else {
+        window.speechSynthesis.cancel();
+        speechButton.textContent = 'Listen';
+    }
+});
+// AI END xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+    // const currentDate = new Date();
+    // let currentYear = new Date().getFullYear();
+    // let currentMonth = new Date().getMonth() + 1;
+    let currentYear = 2025;
+    let currentMonth = 3;
+    const currentDate = 28
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const availableYears = generate_Barchart_dashboard_1_inYears()[0];
+
+    // Initialize global variables
+    let globalSelectedYear = currentYear;
+    let globalSelectedMonth = currentMonth;
+    
+
+function updateKPIs(month, year) {
+    const monthData = getMonthlyOccupancyAndADR(month, year);
+    
+    // Calculate averages
+    const avgOccupancy = monthData.occupancyData.data.reduce((a, b) => a + b, 0) / monthData.occupancyData.data.length;
+    const avgADR = monthData.adrData.data.reduce((a, b) => a + b, 0) / monthData.adrData.data.length;
+    
+    // Update KPI elements
+    document.getElementById('db4-kpi-1').innerHTML = `
+        <h5>Average Occupancy Rate</h5>
+        <p>${Math.round(avgOccupancy)}%</p>
+        <small>${months[month-1]} ${year}</small>
+    `;
+    
+    document.getElementById('db4-kpi-2').innerHTML = `
+        <h5>Average Daily Rate</h5>
+        <p>$${Math.round(avgADR)}</p>
+        <small>${months[month-1]} ${year}</small>
+    `;
+
+    updateKpiForAi('1', `For average of ${months[month-1]} ${year},  Average Occupancy Rate : ${Math.round(avgOccupancy)}% , Average Daily Rate : $${Math.round(avgADR)}`);
+}
+
+function updateThirdRowKPIs(month, year) {
+    const monthData = getMonthlyOccupancyAndADR(month, year);
+    const TOTAL_ROOMS = getTotalRooms(); // Get actual total rooms
+    // Get today's data
+    const todayIndex = today.getDate() - 1;
+    const todayADR = monthData.adrData.data[todayIndex] || 0;
+    const todayOccupancy = monthData.occupancyData.data[todayIndex] || 0;
+    
+    // Calculate today's revenue
+    // Revenue = ADR × Number of Occupied Rooms
+    const occupiedRooms = Math.round(TOTAL_ROOMS * (todayOccupancy / 100));
+    const todayRevenue = todayADR * occupiedRooms;
+
+    // Update KPI displays
+    document.getElementById('db4-kpi-3').innerHTML = `
+        <h5>Today's Occupancy Rate</h5>
+        <p>${Math.round(todayOccupancy)}%</p>
+        <small>${today.getDate()} ${months[month-1]} ${year}</small>
+    `;
+    
+    document.getElementById('db4-kpi-4').innerHTML = `
+        <h5>Today's Revenue</h5>
+        <p>$${Math.round(todayRevenue).toLocaleString()}</p>
+        <small>${today.getDate()} ${months[month-1]} ${year}</small>
+    `;
+    
+    document.getElementById('db4-kpi-5').innerHTML = `
+        <h5>Today's ADR</h5>
+        <p>$${Math.round(todayADR).toLocaleString()}</p>
+        <small>${today.getDate()} ${months[month-1]} ${year}</small>
+    `;
+    updateKpiForAi('3', ` Today's Occupancy Rate: ${Math.round(todayOccupancy)}%, Today's Revenue: $${Math.round(todayRevenue).toLocaleString()}, Today's ADR: $${Math.round(todayADR).toLocaleString()} `);
+}
+
+function updateChartBasedOnSelection() {
+    const newChartData = getMonthlyOccupancyAndADR(globalSelectedMonth, globalSelectedYear);
+    
+    // Log the data to check its structure
+    console.log('New Chart Data:', newChartData);
+
+    const dayNumbers = newChartData.labels.map(dateStr => parseInt(dateStr.split(' ')[2]));
+    
+    // Ensure occupancyData and adrData are arrays
+    if (Array.isArray(newChartData.occupancyData.data) && Array.isArray(newChartData.adrData.data)) {
+        drawComboChart("chart41", dayNumbers, newChartData.occupancyData.data, newChartData.adrData.data);
+        updateKPIs(globalSelectedMonth, globalSelectedYear);
+        updateKpiForAi('2', ` This is the ComboChart data for ${globalSelectedYear}, ${months[globalSelectedMonth - 1]} (Line Chart + Bar Chart): days- ${String(dayNumbers)}, 
+    occupancyData- ${String(newChartData.occupancyData.label)}, ${String(newChartData.occupancyData.data)},
+    adrData- ${String(newChartData.adrData.label)}, ${String(newChartData.adrData.data)}, `);
+    } else {
+        console.error('Occupancy or ADR data is not in the expected format.');
+    }
+}
+
+    function handleDropdown() {
+        const chooseYear = document.getElementById("db4-choose-year");
+        const chooseMonth = document.getElementById("db4-choose-month");
+
+        if (!chooseYear || !chooseMonth) {
+            console.error("Dropdown elements not found.");
+            return;
+        }
+
+        // Create dropdown for selecting a year
+        chooseYear.innerHTML = availableYears
+            .map(year => `<option value="${year}" style="text-align: center;">${year}</option>`)
+            .join('');
+        
+        chooseYear.value = currentYear.toString();
+        globalSelectedYear = currentYear;
+
+        // Create initial month dropdown
+        chooseMonth.innerHTML = months
+            .map((month, index) => `<option value="${index + 1}" style="text-align: center;">${month}</option>`)
+            .join('');
+        
+        chooseMonth.value = currentMonth.toString();
+        globalSelectedMonth = currentMonth;
+
+        // Year change event
+        chooseYear.addEventListener("change", function() {
+            globalSelectedYear = parseInt(this.value);
+            updateChartBasedOnSelection();
+        });
+
+        // Month change event
+        chooseMonth.addEventListener("change", function() {
+            globalSelectedMonth = parseInt(this.value);
+            updateChartBasedOnSelection();
+        });
+    }
+
+    // Get initial chart data for current month
+// Get initial chart data for current month
+const chartData = getMonthlyOccupancyAndADR(currentMonth, currentYear);
+console.log('Chart Data:', chartData);
+
+// Extract day numbers from labels
+const dayNumbers = chartData.labels.map(dateStr => parseInt(dateStr.split(' ')[2]));
+
+updateKpiForAi('2', ` This is the ComboChart data for ${currentYear}, ${months[currentMonth-1]} (Line Chart + Bar Chart): days- ${String(dayNumbers)}, 
+    occupancyData- ${String(chartData.occupancyData.label)}, ${String(chartData.occupancyData.data)},
+    adrData- ${String(chartData.adrData.label)}, ${String(chartData.adrData.data)}, `);
+
+
+drawComboChart(
+    "chart41",
+    dayNumbers,
+    chartData.occupancyData.data,
+    chartData.adrData.data
+);
+    // Initialize dropdowns and KPIs
+handleDropdown();
+updateKPIs(currentMonth, currentYear);
+updateThirdRowKPIs(currentMonth, currentYear);
+
+</script>

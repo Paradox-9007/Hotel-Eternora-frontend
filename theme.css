@@ -1,0 +1,95 @@
+:root {
+  /* Light mode colors */
+  --bg-primary: #FEFCFF;
+  --bg-secondary: #e2e6ea;
+  --text-primary: #374151;
+  --text-secondary: #6b7280;
+  --accent-primary: #007bff;
+  --accent-hover: #0056b3;
+  --navbar-bg: transparent;
+  --navbar-text: #000000;
+  --card-bg: #A9B5DF;
+  --border-color: #dee2e6;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --btn-bg: #A9B5DF;
+  --transition-speed: 0.3s;
+  --sidebar-bg: #A9B5DF;
+  --sidebar-hover: #e2e6ea;
+  --sidebar-text: #333333;
+  --sidebar-border: #dee2e6;
+  --main-text: #000000;
+  --CalenCarol:#B3B8D9;
+  --newcard:#9daeec;
+  
+}
+
+/* Dark mode colors */
+body.dark-mode {
+  --bg-primary: #484b6a;
+  --bg-secondary: #e4e5f1;
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --accent-primary: #3b82f6;
+  --accent-hover: #60a5fa;
+  --navbar-bg: transparent;
+  --navbar-text: #ffffff;
+  --card-bg: #1f2937;
+  --border-color: #374151;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --btn-bg: #1f2937;
+  --sidebar-bg: #1f2937;
+  --sidebar-hover: #2d3748;
+  --sidebar-text: #e5e7eb;
+  --sidebar-border: #35383d;
+  --main-text: #ffffff;
+  --calenadar-control:#1f2937;
+  --newcard:#6e82a5;
+  --CalenCarol:#617393;
+}
+
+
+/* Apply theme colors */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color var(--transition-speed),
+    color var(--transition-speed);
+}
+
+.navbar {
+  background-color: var(--navbar-bg) !important;
+  color: var(--navbar-text) !important;
+  transition: background-color var(--transition-speed);
+}
+
+.navbar-brand,
+.nav-link {
+  color: var(--navbar-text) !important;
+}
+
+.card,
+.news-card {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  box-shadow: 0 4px 10px var(--shadow-color);
+}
+
+.btn {
+  background-color: var(--btn-bg);
+  transition: background-color var(--transition-speed);
+}
+
+.btn-primary {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.sidebar {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}

@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+/* Main container styles */
+.db6-dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: fit-content;
+  width: 100%;
+  font-family: 'Arial', sans-serif;
+  gap: 12px;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+/* Common styles for dashboard sections */
+.db6-rect {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top section layout */
+.db6-top-section {
+  display: flex;
+  flex: 2;
+  gap: 12px;
+  min-height: 300px;
+}
+
+/* Bottom section layout */
+.db6-bottom-section {
+  display: flex;
+  flex: 3;
+  gap: 12px;
+  min-height: 400px;
+}
+
+/* Top tile styling */
+.db6-top-tile {
+  flex: 1;
+  position: relative;
+}
+
+/* Top middle tile with KPI data */
+.db6-top-tile:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 24px;
+}
+
+.db6-top-tile div {
+  font-size: 16px;
+  color: #333;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  margin: 4px 0;
+  font-weight: 500;
+}
+
+/* Bottom left section */
+.db6-bottom-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+/* Filter dropdown section */
+.db6-filter {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.db6-filter select {
+  width: 40%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.3s;
+}
+
+.db6-filter select:hover {
+  border-color: #aaa;
+}
+
+.db6-filter select:focus {
+  outline: none;
+  border-color: #4CB5F5;
+  box-shadow: 0 0 0 2px rgba(76, 181, 245, 0.2);
+}
+
+/* KPI display in bottom left */
+.db6-bottom-left div:not(.db6-filter) {
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Bottom right chart section */
+.db6-bottom-right {
+  flex: 2;
+  position: relative;
+}
+
+canvas#chart61, canvas#chart63{
+    max-width: 100% !important;
+    max-height: auto !important;
+}
+/* Age group color indicators */
+#kid_total {border-left: 4px solid #d65e00;}
+#adult_total {border-left: 4px solid #cc79a7;}
+#middleage_total {border-left: 4px solid #56b4e9;}
+#elderly_total {border-left: 4px solid #009e73;}
+
+#adult_rev {border-left: 4px solid #cc79a7;}
+#middleage_rev {border-left: 4px solid #56b4e9;}
+#elderly_rev {border-left: 4px solid #009e73;}
+
+#kid_total, #adult_total, #middleage_total, #elderly_total,
+#adult_rev, #middleage_rev, #elderly_rev {
+    border-radius: 8px; /* Rounded corners for card effect */
+    padding: 10px; /* Add padding for content */
+    box-shadow: 4px 8px 12px rgba(0, 0, 0, 0.41);
+    background-color: aliceblue; /* Ensure background is white for card effect */
+    margin-bottom: 16px; /* Add margin between cards */
+}
+
+#db6-ai-container {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    }
+
+#D6-ai-analysis {
+    font-size: 16px;
+    color: #272727;
+    text-align: left;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-size: 1.2rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .db6-top-section,
+  .db6-bottom-section {
+    flex-direction: column;
+  }
+  
+  .db6-filter select {
+    width: 100%;
+  }
+}
+    </style>
+  </head>
+  <body>
+    <h4>Age Group Segmentation of Arrival Guests</h4>
+    <div class="db6-dashboard-container">
+      <div class="db6-top-section">
+        <div class="db6-top-tile db6-rect"><canvas id="chart61" style="width: 100%; height: auto;"></canvas></div>
+        <div class="db6-top-tile db6-rect">
+            <div id="kid_total">Number of children</div>
+            <div id="adult_total">Number of middle-age</div>
+            <div id="middleage_total">Number of adults</div>
+            <div id="elderly_total">Number of elderly</div>
+        </div>
+        <div class="db6-top-tile db6-rect"><canvas id="chart63"  style="width: 100%; height: auto;"></canvas></div>
+      </div>
+      <div class="db6-bottom-section">
+        <div class="db6-bottom-left db6-rect">
+            <div class="db6-filter">
+                <select id="db6-choose-year"></select>
+                <select id="db6-choose-month"></select>
+            </div>
+            <div id="adult_rev">Number of adults</div>
+            <div id="middleage_rev">Number of middle-ages</div>
+            <div id="elderly_rev">Number of elderly</div>
+        </div>
+        <div class="db6-bottom-right db6-rect">
+          <canvas id="chart62"></canvas>
+        </div>
+      </div>
+    </div>
+
+
+    <div style="margin-top: 20px; text-align: center;">
+        <button id="D6-generate-ai-report-button" style="padding: 10px 20px; border-radius: 5px; background-color: var(--card-bg); color: white; border: none; cursor: pointer;">Generate AI Report</button>
+    </div>
+      <div id="db6-ai-container" class="db6-rect">
+          <div id="D6-ai-analysis"></div>
+          <button id="D6-retry-ai-analysis" style="margin-top: 10px;">Try Again</button>
+      </div>
+      <div id="D6-input-container" style="display: flex; flex-direction: column; width: 100%; margin-top: 10px;">
+          <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+              <div style="flex: 1;">
+              <input id="D6-ai-response-input" type="text" style=" width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #ccc; " placeholder="Enter your response here">
+              </div>
+  
+              <div style="display: flex; margin-left: 5px; width: 400px;">
+              <div class="mb-3">
+                  <label for="speech-lang-select"><strong>Select Language for Voice Input:</strong></label>
+                  <select class="form-control" id="speech-lang-select" style="max-width: 300px;">
+                  <option value="en-US">English (US)</option>
+                  <option value="my-MM">Burmese (Myanmar)</option>
+                  <option value="zh-CN">Chinese (Mandarin)</option>
+                  <option value="th-TH">Thai</option>
+                  <option value="ms-MY">Malay</option>
+                  <option value="id-ID">Indonesian</option>
+                  </select>
+          </div>
+              <button id="D6-text-to-speech" style="width: 100px; height: 50px; padding: 5px 0px 5px 0px; margin-left: 10px; border-radius: 5px; background-color:var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Listen</button>
+              <button id="D6-speech-to-text" style="width: 100px; height: 50px; padding: 5px 0px 5px 0px; margin-left: 10px; border-radius: 5px; background-color:var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Speak</button>
+              </div>
+          </div>
+  
+          <div id="db6-last-ai-row" style="display: flex;">
+              <button id="D6-submit-response" style="width: 50%;margin-top: 10px; padding: 10px; border-radius: 5px; background-color: var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Submit</button>
+              
+      </div>
+      </div>
+</html>
+<!-- Multi-language Speech-to-Text Script -->
+<script>
+    document.querySelectorAll('button[id$="-speech-to-text"]').forEach(button => {
+      button.addEventListener('click', () => {
+        const inputId = button.id.replace('-speech-to-text', '-ai-response-input');
+        const inputElement = document.getElementById(inputId);
+        const langSelector = document.getElementById("speech-lang-select");
+        const selectedLang = langSelector ? langSelector.value : 'en-US';
+  
+        if (!inputElement) return;
+  
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          alert("Your browser does not support Speech Recognition. Please use Chrome.");
+          return;
+        }
+  
+        const recognition = new SpeechRecognition();
+        recognition.lang = selectedLang;
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+  
+        recognition.start();
+  
+        recognition.onresult = function(event) {
+          const transcript = event.results[0][0].transcript;
+          inputElement.value = transcript;
+        };
+  
+        recognition.onerror = function(event) {
+          alert("Speech recognition error: " + event.error);
+        };
+      });
+    });
+  </script>
+<script>
+  import { drawDonutChart, drawPieChart, drawMultiLineChart} from "../drawChart.js";
+  import { fetchClientRequest, fetchBookingsRequest } from '../APIcaller.js'
+  import { getBookingsByAgeGroup, generate_Barchart_dashboard_1_inYears } from '../processData.js';
+  import { generateAiContent } from '../aiAnalysis.js'
+
+// AI START xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+let kpi_for_ai = new Proxy({}, {
+    set(target, key, value) {
+        target[key] = value;
+        // Removed automatic call to updateAIAnalysis()
+        return true;
+    }
+});
+
+document.getElementById('db6-ai-container').style.display = 'none';
+document.getElementById('D6-input-container').style.display = 'none';
+
+document.getElementById('D6-generate-ai-report-button').addEventListener('click', () => {
+    updateAIAnalysis();
+    document.getElementById('D6-input-container').style.display = 'block';
+    document.getElementById('db6-ai-container').style.display = 'block';
+    document.getElementById('D6-generate-ai-report-button').style.display = 'none';
+});
+
+// Store the last used prompt to use for retries
+let lastUsedPrompt = '';
+
+function updateKpiForAi(key, value) {
+    kpi_for_ai[key] = value;
+}
+async function updateAIAnalysis() {
+    const aiAnalysisElement = document.getElementById('D6-ai-analysis');
+    const retryButton = document.getElementById('D6-retry-ai-analysis');
+    const responseInput = document.getElementById('D6-ai-response-input');
+    const inputTaker = document.getElementById('D6-input-container');
+
+    if (!aiAnalysisElement) return;
+
+    // Hide retry button and input container initially
+    retryButton.style.display = 'none';
+    inputTaker.style.display = 'none';
+
+    // Show loading state
+    aiAnalysisElement.innerHTML = `
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Generating</p>
+        </div>
+    `;
+
+    // Define the default prompt
+    const defaultPrompt = `Generate analytic reports on:
+    "Guest Demographics Forecast: Age Group Booking Trends"
+    "Future Travel Trends: Age Group Segmentation Predictions"
+    "Who Will Book Next? Age-Based Forecasting for Guest Arrivals"`;
+
+    // Determine the prompt to use
+    const userPrompt = responseInput.value.trim();
+    
+    // Update last used prompt, prioritizing user input
+    lastUsedPrompt = userPrompt || lastUsedPrompt || defaultPrompt;
+
+    const chartDataString = Object.values(kpi_for_ai).filter(Boolean).join('\n');
+    const combinedPrompt = `${lastUsedPrompt}\nBased on the following booking data:\n${chartDataString}`;
+
+    try {
+        console.log(`Generating AI content`);
+        
+        // Improved timeout and error handling
+        const generatePromise = generateAiContent('D6-ai-analysis', combinedPrompt, '');
+        
+        const status = await Promise.race([
+            generatePromise,
+            new Promise((_, reject) => setTimeout(() => {
+                console.log(`Timeout`);
+                reject(new Error('Request timeout'));
+            }, 30000))
+        ]);
+
+        console.log(`Status:`, status);
+
+        if (status === 'success') {
+            inputTaker.style.display = 'flex';
+            return;
+        } else {
+            // Log more detailed error information if available
+            const errorDetails = await generatePromise.catch(err => err);
+            console.error(`Detailed error:`, errorDetails);
+            throw new Error('Failed to generate AI content');
+            retryButton.style.display = 'block';
+        }
+    } catch (error) {
+        console.error(`Failed:`, error);
+       
+        aiAnalysisElement.innerHTML = `
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Generating</p>
+            </div>
+        `;
+        inputTaker.style.display = 'none';
+    }
+}
+
+// Event listeners
+document.getElementById('D6-submit-response').addEventListener('click', () => {
+    updateAIAnalysis();
+});
+
+document.getElementById('D6-retry-ai-analysis').addEventListener('click', () => {
+    // Use the last used prompt when retrying
+    const responseInput = document.getElementById('D6-ai-response-input');
+    responseInput.value = lastUsedPrompt;
+    updateAIAnalysis();
+});
+
+document.getElementById('D6-text-to-speech').addEventListener('click', function() {
+    const aiAnalysisElement = document.getElementById('D6-ai-analysis');
+    const text = aiAnalysisElement.textContent || aiAnalysisElement.innerText;
+    const speechButton = this;
+
+    if (speechButton.textContent === 'Listen') {
+        const speech = new SpeechSynthesisUtterance(text);
+        speech.onend = () => {
+            speechButton.textContent = 'Listen';
+        };
+        window.speechSynthesis.speak(speech);
+        speechButton.textContent = 'Stop';
+    } else {
+        window.speechSynthesis.cancel();
+        speechButton.textContent = 'Listen';
+    }
+});
+
+
+// AI END xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+// const currentDate = new Date();
+// let currentYear = new Date().getFullYear();
+// let currentMonth = new Date().getMonth() + 1;
+let currentYear = 2025;
+let currentMonth = 3;
+const currentDate = 28
+const availableYears = generate_Barchart_dashboard_1_inYears()[0];
+let globalSelectedYear = currentYear;
+let globalSelectedMonth = currentMonth;
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const full_months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+let bar = true;
+
+// Age group labels
+const ageGroupLabels = ["Children (1-17)", "Adult (18-35)", "Middle Age (36-64)", "Elderly (65+)"];
+const ageGroupColors = ["#D65E00", "#CC79A7", "#56B4E9", "#009E73"];
+
+
+function calculateRevenueAndProfit(bookings) {
+    const result = {
+        adult: { revenue: 0, profit: 0 },
+        middleAge: { revenue: 0, profit: 0 },
+        elderly: { revenue: 0, profit: 0 }
+    };
+
+    Object.entries(bookings).forEach(([group, groupBookings]) => {
+        const totalRevenue = groupBookings.reduce((sum, booking) => {
+            return sum + (booking.totalCharge || 0);
+        }, 0);
+
+        switch(group) {
+            case "Adult (18-35)":
+                result.adult.revenue = totalRevenue;
+                result.adult.profit = totalRevenue * 0.3;
+                break;
+            case "Middle Age (36-64)":
+                result.middleAge.revenue = totalRevenue;
+                result.middleAge.profit = totalRevenue * 0.3;
+                break;
+            case "Elderly (65+)":
+                result.elderly.revenue = totalRevenue;
+                result.elderly.profit = totalRevenue * 0.3;
+                break;
+        }
+    });
+
+    return result;
+}
+
+// Function to calculate contribution percentages
+function calculateContributionPercentages(data) {
+    const totalBookings = data.adultCount + data.middleAgeCount + data.elderlyCount;
+    return {
+        adult: ((data.adultCount / totalBookings) * 100).toFixed(1),
+        middleAge: ((data.middleAgeCount / totalBookings) * 100).toFixed(1),
+        elderly: ((data.elderlyCount / totalBookings) * 100).toFixed(1)
+    };
+}
+
+// Function to update charts and KPIs
+function updateChartsAndKPIs() {
+    const ageGroupData = getBookingsByAgeGroup(
+        globalSelectedYear || null,
+        globalSelectedMonth || null
+    );
+
+    // Update donut chart with booking counts
+    const bookingCounts = {
+        labels: ageGroupLabels,
+        data: [
+            ageGroupData.summary.childrenCount,
+            ageGroupData.summary.adultCount,
+            ageGroupData.summary.middleAgeCount,
+            ageGroupData.summary.elderlyCount
+        ],
+        backgroundColor: ageGroupColors
+    };
+    drawDonutChart( "chart61", bookingCounts.labels, bookingCounts, "Booking Distribution by Age Group", "top");
+    updateKpiForAi("1" , `The following are the Arrival Age Group data for ${globalSelectedYear ? globalSelectedYear : 'all time'}${globalSelectedMonth ? `, ${months[globalSelectedMonth - 1]}` : ''} `)
+    updateKpiForAi("2" , `This is the Arrival Age Group data from donut chart: ${ageGroupLabels[0]}= ${ageGroupData.summary.childrenCount}, ${ageGroupLabels[1]}= ${ageGroupData.summary.adultCount}, ${ageGroupLabels[2]}= ${ageGroupData.summary.middleAgeCount}, ${ageGroupLabels[3]}= ${ageGroupData.summary.elderlyCount} `);
+    
+    // Calculate revenue and profit
+    const financials = calculateRevenueAndProfit(ageGroupData.bookings);
+    
+    // Calculate contribution percentages
+    const contribution = calculateContributionPercentages(ageGroupData.summary);
+
+    // Update KPIs
+    document.getElementById("kid_total").textContent = 
+        `Children (1-17): ${ageGroupData.summary.childrenCount.toLocaleString()}`;
+    document.getElementById("adult_total").textContent = 
+        `Adults (18-35): ${ageGroupData.summary.adultCount.toLocaleString()}`;
+    document.getElementById("middleage_total").textContent = 
+        `Middle Age (36-64): ${ageGroupData.summary.middleAgeCount.toLocaleString()}`;
+    document.getElementById("elderly_total").textContent = 
+        `Elderly (65+): ${ageGroupData.summary.elderlyCount.toLocaleString()}`;
+
+    
+    document.getElementById("adult_rev").textContent = 
+        `Adult (18-35): $${financials.adult.profit.toLocaleString()}`;
+    document.getElementById("middleage_rev").textContent = 
+        `Middle Age (36-64): $${financials.middleAge.profit.toLocaleString()}`;
+    document.getElementById("elderly_rev").textContent = 
+        `Elderly (65+): $${financials.elderly.profit.toLocaleString()}`;
+    // Update profit KPIs with contribution percentages
+    // document.getElementById("adult_rev").textContent = 
+    //     `Adult (18-35): $${financials.adult.profit.toLocaleString()} (${contribution.adult}%)`;
+    // document.getElementById("middleage_rev").textContent = 
+    //     `Middle Age (36-64): $${financials.middleAge.profit.toLocaleString()} (${contribution.middleAge}%)`;
+    // document.getElementById("elderly_rev").textContent = 
+    //     `Elderly (65+): $${financials.elderly.profit.toLocaleString()} (${contribution.elderly}%)`;
+    updateKpiForAi("4" , `  The following are the Revenue Contribution by each age group during the provide period: Adult (18-35): $${financials.adult.profit.toLocaleString()} (${contribution.adult}%) , Middle Age (36-64): $${financials.middleAge.profit.toLocaleString()} (${contribution.middleAge}%) , Elderly (65+): $${financials.elderly.profit.toLocaleString()} (${contribution.elderly}%)`)
+
+    // Create profit pie chart data
+    const profitData = {
+        labels: ["Adult (18-35)", "Middle Age (36-64)", "Elderly (65+)"],
+        data: [
+            financials.adult.profit,
+            financials.middleAge.profit,
+            financials.elderly.profit
+        ],
+        backgroundColor: [ageGroupColors[1], ageGroupColors[2], ageGroupColors[3]]  // Fixed color indices
+    };
+
+    // Draw profit pie chart
+    drawPieChart( "chart63", profitData.labels, profitData, 
+    !globalSelectedYear ? 'Revenue Contribution by Age Group - All Time' :
+    !globalSelectedMonth ? `Revenue Contribution by Age Group - ${globalSelectedYear}` :
+    `Revenue Contribution by Age Group - ${full_months[globalSelectedMonth-1]} ${globalSelectedYear}`,
+    'top');
+
+    // Create daily profit trends
+    let dailyLabels = [];
+    let adultProfitDataset = { label: "Adult (18-35)", data: [] };
+    let middleAgeProfitDataset = { label: "Middle Age (36-64)", data: [] };
+    let elderlyProfitDataset = { label: "Elderly (65+)", data: [] };
+
+    // Create a map to store profits by date
+    const profitsByDate = new Map();
+
+    // Process all bookings to aggregate profits by date
+    Object.entries(ageGroupData.bookings).forEach(([group, bookings]) => {
+        bookings.forEach(booking => {
+            const arrivalDate = new Date(booking.arrivalDay);
+            // Only process dates within selected year/month if specified
+            if ((!globalSelectedYear || arrivalDate.getFullYear() === globalSelectedYear) &&
+                (!globalSelectedMonth || arrivalDate.getMonth() + 1 === globalSelectedMonth)) {
+                // Add one day to the date key to fix alignment
+                arrivalDate.setDate(arrivalDate.getDate() + 1);
+                const dateKey = arrivalDate.toISOString().split('T')[0];
+                
+                if (!profitsByDate.has(dateKey)) {
+                    profitsByDate.set(dateKey, {
+                        adult: 0,
+                        middleAge: 0,
+                        elderly: 0
+                    });
+                }
+
+                const profit = (booking.totalCharge || 0) * 0.3;
+                const profits = profitsByDate.get(dateKey);
+
+                switch(group) {
+                    case "Adult (18-35)":
+                        profits.adult += profit;
+                        break;
+                    case "Middle Age (36-64)":
+                        profits.middleAge += profit;
+                        break;
+                    case "Elderly (65+)":
+                        profits.elderly += profit;
+                        break;
+                }
+            }
+        });
+    });
+
+    // Convert the map to sorted arrays
+    const sortedDates = Array.from(profitsByDate.keys())
+        .filter(date => {
+            if (globalSelectedMonth) {
+                const d = new Date(date);
+                return d.getMonth() + 1 === globalSelectedMonth;
+            }
+            return true;
+        })
+        .sort();
+
+    // Get the number of days in the selected month
+    const getDaysInMonth = (year, month) => {
+        return new Date(year, month, 0).getDate();
+    };
+
+    // Create array with all days in month
+    let allDatesMap = new Map();
+    
+    if (globalSelectedMonth && globalSelectedYear) {
+        const totalDays = getDaysInMonth(globalSelectedYear, globalSelectedMonth);
+        for (let day = 1; day <= totalDays; day++) {
+            const dateStr = `${globalSelectedYear}-${String(globalSelectedMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            dailyLabels.push(day.toString());
+            allDatesMap.set(dateStr, {
+                adult: 0,
+                middleAge: 0,
+                elderly: 0
+            });
+        }
+        
+        // Merge existing profit data into the complete dates map
+        sortedDates.forEach(date => {
+            allDatesMap.set(date, profitsByDate.get(date));
+        });
+
+        // Populate datasets with all days
+        adultProfitDataset.data = Array.from(allDatesMap.values()).map(profit => profit.adult);
+        middleAgeProfitDataset.data = Array.from(allDatesMap.values()).map(profit => profit.middleAge);
+        elderlyProfitDataset.data = Array.from(allDatesMap.values()).map(profit => profit.elderly);
+    } else {
+        dailyLabels = sortedDates.map(date => {
+            const d = new Date(date);
+            return d.toLocaleDateString("en-US", {day: "numeric" });
+        });
+        
+        // Use existing data for non-monthly view
+        sortedDates.forEach(date => {
+            const profits = profitsByDate.get(date);
+            adultProfitDataset.data.push(profits.adult);
+            middleAgeProfitDataset.data.push(profits.middleAge);
+            elderlyProfitDataset.data.push(profits.elderly);
+        });
+    }
+
+    // Draw multi-line chart with aggregated data
+    drawMultiLineChart(
+        "chart62",
+        dailyLabels,
+        adultProfitDataset,
+        middleAgeProfitDataset,
+        elderlyProfitDataset,
+        "Daily Profit Trends by Age Group"
+    );
+    updateKpiForAi("3" , `This is the Profit generated by different Arrival Age Group from MultiLine Chart: days-${dailyLabels}, Profit by adult- ${adultProfitDataset.data}, Profit by Middle-Ages- ${middleAgeProfitDataset.data}, Profit by Elderly- ${elderlyProfitDataset.data} `);
+
+    // Create monthly profit trends
+    const monthlyLabels = months;
+    const monthlyAdultProfitDataset = { label: "Adult (18-35)", data: Array(12).fill(0) };
+    const monthlyMiddleAgeProfitDataset = { label: "Middle Age (36-64)", data: Array(12).fill(0) };
+    const monthlyElderlyProfitDataset = { label: "Elderly (65+)", data: Array(12).fill(0) };
+
+    // Process all bookings to aggregate profits by month
+    Object.entries(ageGroupData.bookings).forEach(([group, bookings]) => {
+        bookings.forEach(booking => {
+            const arrivalDate = new Date(booking.arrivalDay);
+            const monthIndex = arrivalDate.getMonth();
+            const profit = (booking.totalCharge || 0) * 0.3;
+
+            switch(group) {
+                case "Adult (18-35)":
+                    monthlyAdultProfitDataset.data[monthIndex] += profit;
+                    break;
+                case "Middle Age (36-64)":
+                    monthlyMiddleAgeProfitDataset.data[monthIndex] += profit;
+                    break;
+                case "Elderly (65+)":
+                    monthlyElderlyProfitDataset.data[monthIndex] += profit;
+                    break;
+            }
+        });
+    });
+
+    // Draw multi-line chart with either daily or monthly data based on selection
+    if (!globalSelectedYear) {
+        // If no year is selected, show yearly data
+        const yearlyLabels = availableYears;
+        const yearlyAdultProfitDataset = { label: "Adult (18-35)", data: Array(availableYears.length).fill(0) };
+        const yearlyMiddleAgeProfitDataset = { label: "Middle Age (36-64)", data: Array(availableYears.length).fill(0) };
+        const yearlyElderlyProfitDataset = { label: "Elderly (65+)", data: Array(availableYears.length).fill(0) };
+
+        // Process all bookings to aggregate profits by year
+        Object.entries(ageGroupData.bookings).forEach(([group, bookings]) => {
+            bookings.forEach(booking => {
+                const arrivalDate = new Date(booking.arrivalDay);
+                const yearIndex = availableYears.indexOf(arrivalDate.getFullYear());
+                const profit = (booking.totalCharge || 0) * 0.3;
+
+                switch(group) {
+                    case "Adult (18-35)":
+                        yearlyAdultProfitDataset.data[yearIndex] += profit;
+                        break;
+                    case "Middle Age (36-64)":
+                        yearlyMiddleAgeProfitDataset.data[yearIndex] += profit;
+                        break;
+                    case "Elderly (65+)":
+                        yearlyElderlyProfitDataset.data[yearIndex] += profit;
+                        break;
+                }
+            });
+        });
+
+        yearlyAdultProfitDataset.borderColor = ageGroupColors[1];     // Adults
+        yearlyAdultProfitDataset.backgroundColor = "rgba(28, 78, 128, 0.2)";
+        
+        yearlyMiddleAgeProfitDataset.borderColor = ageGroupColors[2];  // Middle age
+        yearlyMiddleAgeProfitDataset.backgroundColor = "rgba(219, 174, 88, 0.2)";
+        
+        yearlyElderlyProfitDataset.borderColor = ageGroupColors[3];    // Elderly
+        yearlyElderlyProfitDataset.backgroundColor = "rgba(106, 177, 135, 0.2)";
+
+        drawMultiLineChart(
+            "chart62",
+            yearlyLabels,
+            yearlyAdultProfitDataset,
+            yearlyMiddleAgeProfitDataset,
+            yearlyElderlyProfitDataset,
+            "Yearly Profit Trends by Age Group"
+        );
+        updateKpiForAi("3" , `This is the Profit generated by different Arrival Age Group from MultiLine Chart: years-${yearlyLabels}, Profit by adult- ${yearlyAdultProfitDataset.data}, Profit by Middle-Ages- ${yearlyMiddleAgeProfitDataset.data}, Profit by Elderly- ${yearlyElderlyProfitDataset.data} `);
+
+
+    } else if (globalSelectedMonth) {
+        adultProfitDataset.borderColor = ageGroupColors[1];     // Adults
+        adultProfitDataset.backgroundColor = "rgba(28, 78, 128, 0.2)";
+        
+        middleAgeProfitDataset.borderColor = ageGroupColors[2];  // Middle age
+        middleAgeProfitDataset.backgroundColor = "rgba(219, 174, 88, 0.2)";
+        
+        elderlyProfitDataset.borderColor = ageGroupColors[3];    // Elderly
+        elderlyProfitDataset.backgroundColor = "rgba(106, 177, 135, 0.2)";
+        drawMultiLineChart(
+            "chart62",
+            dailyLabels,
+            adultProfitDataset,
+            middleAgeProfitDataset,
+            elderlyProfitDataset,
+            "Daily Profit Trends by Age Group"
+        );
+        updateKpiForAi("3" , `This is the Profit generated by different Arrival Age Group from MultiLine Chart: days-${dailyLabels}, Profit by adult- ${adultProfitDataset.data}, Profit by Middle-Ages- ${middleAgeProfitDataset.data}, Profit by Elderly- ${elderlyProfitDataset.data} `);
+
+
+    } else {
+        monthlyAdultProfitDataset.borderColor = ageGroupColors[1];     // Adults
+        monthlyAdultProfitDataset.backgroundColor = "rgba(28, 78, 128, 0.2)";
+        
+        monthlyMiddleAgeProfitDataset.borderColor = ageGroupColors[2];  // Middle age
+        monthlyMiddleAgeProfitDataset.backgroundColor = "rgba(219, 174, 88, 0.2)";
+        
+        monthlyElderlyProfitDataset.borderColor = ageGroupColors[3];    // Elderly
+        monthlyElderlyProfitDataset.backgroundColor = "rgba(106, 177, 135, 0.2)";
+        drawMultiLineChart(
+            "chart62",
+            monthlyLabels,
+            monthlyAdultProfitDataset,
+            monthlyMiddleAgeProfitDataset,
+            monthlyElderlyProfitDataset,
+            "Monthly Profit Trends by Age Group"
+        );
+        updateKpiForAi("3" , `This is the Profit generated by different Arrival Age Group from MultiLine Chart: months-${monthlyLabels}, Profit by adult- ${monthlyAdultProfitDataset.data}, Profit by Middle-Ages- ${monthlyMiddleAgeProfitDataset.data}, Profit by Elderly- ${monthlyElderlyProfitDataset.data} `);
+    }
+}
+
+// Handle year dropdown changes
+function handleDropdown() {
+    const chooseYear = document.getElementById("db6-choose-year");
+    const chooseMonth = document.getElementById("db6-choose-month");
+
+    if (!chooseYear || !chooseMonth) {
+        console.error("Dropdown elements not found.");
+        return;
+    }
+
+    // Create year dropdown
+    chooseYear.innerHTML = `<option value="" style="text-align: center;">All Years</option>
+        ${availableYears.map(year => `<option value="${year}" style="text-align: center;">${year}</option>`).join('')}`;
+    
+    chooseYear.value = currentYear;
+    chooseMonth.style.display = "inline";
+
+    chooseYear.addEventListener("change", function() {
+        globalSelectedYear = this.value ? parseInt(this.value) : null;
+        globalSelectedMonth = null; // Reset month selection whenever year changes
+        chooseMonth.value = '';
+        
+        if (!this.value) {
+            chooseMonth.style.display = "none";
+        } else {
+            chooseMonth.style.display = "inline";
+            populateMonthDropdown();
+        }
+        updateChartsAndKPIs();
+    });
+
+    chooseMonth.addEventListener("change", function() {
+        globalSelectedMonth = this.value ? parseInt(this.value) : null;
+        updateChartsAndKPIs();
+    });
+}
+
+// Populate month dropdown
+function populateMonthDropdown() {
+    const chooseMonth = document.getElementById("db6-choose-month");
+
+    if (!chooseMonth) {
+        console.error("Error: 'db6-choose-month' element not found.");
+        return;
+    }
+
+    chooseMonth.innerHTML = `<option value="" style="text-align: center;">All Months</option>
+        ${months.map((month, index) => `<option value="${index + 1}" style="text-align: center;">${month}</option>`).join('')}`;
+
+    if (bar) {
+        chooseMonth.value = currentMonth;
+        bar = false;
+    }
+}
+
+// Initialize the dashboard
+handleDropdown();
+populateMonthDropdown();
+updateChartsAndKPIs();
+
+</script>

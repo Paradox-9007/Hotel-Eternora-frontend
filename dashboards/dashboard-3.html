@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .dashboard-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin: 0 auto; /* Center the dashboard */
+      min-height: min-content;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    
+    .rect-db3 {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      margin: 4px;
+      flex: 1;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .top-row {
+      display: flex;
+      height: 100%;
+    }
+    
+    .middle-row {
+      display: flex;
+      height: 30%;
+    }
+    
+    .bottom-row {
+      display: flex;
+      height: 40%;
+    }
+    
+    .main-chart {
+      flex: 2;
+      position: relative;
+    }
+    
+    .side-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .side-top {
+      flex: 4;
+      display: flex;
+      justify-content: flex-start;
+    }
+    
+    .side-middle {
+      flex: 1;
+    }
+    
+    .side-bottom {
+      flex: 1;
+    }
+    
+    .chart-container {
+    width: 100%;
+    height: 100%;
+    max-width: 800px; /* Ensure max-width is consistent */
+    margin: 0 auto;
+    }
+
+
+    .db3-table {
+    width: 100%;
+    height: 425px; /* Fixed height instead of max-height */
+    font-family: 'Arial', sans-serif;
+    border-collapse: separate;
+    border-spacing: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    display: block; /* Enable scrolling for tbody */
+}
+
+.db3-table thead {
+    display: table;
+    width: 100%; /* Account for scrollbar width */
+    table-layout: fixed;
+}
+
+.db3-table tbody {
+    display: block;
+    height: 370px; /* Subtract header height from total height */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.db3-table tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.db3-table th, .db3-table td {
+    padding: 0px;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #e0e0e0;
+    font-size: 14px;
+    width: 25%; /* Ensure equal column width */
+}
+
+
+    #date-picker {
+      width: 100%;
+      padding: 5px;
+      margin: 5px 0;
+    }
+
+    h4 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .kpi-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+      font-size: 14px;
+      min-height: 60px;
+      font-weight: bold;
+      color: #2b2b2b;
+    }
+
+    #db3-ai-container {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    #D3-ai-analysis {
+        font-size: 16px;
+        width: 100%;
+        color: #272727;
+        text-align: left;
+    }
+
+    .loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  font-size: 1.2rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+  </style>
+</head>
+<body>
+  <h4>Arrivals and Departure for Today</h4>
+  <div class="dashboard-container">
+    <div class="top-row">
+      <div class="main-chart rect-db3">
+        <div class="chart-container">
+            <canvas id="chart31" style="width: auto; height: auto; min-width: auto; min-height: auto;"></canvas>
+          </div>
+      </div>
+      <div class="side-panel">
+        <div class="side-top rect-db3">
+            <table class="table table-bordered db3-table">
+                <thead>
+                    <tr>
+                        <th colspan="4" class="text-center" id="db3-tabel-header"></th>
+                    </tr>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Client ID</th>
+                        <th>Time</th>
+                        <th>Action(Arrive or Depart)</th>
+                    </tr>
+                </thead>
+                <tbody id="db3-table-body">
+                    <!-- db3 rows will be dynamically generated -->
+                </tbody>
+            </table>
+        </div>
+        <div class="side-middle rect-db3">
+            <input type="date" id="date-picker" class="form-control">
+        </div>
+      </div>
+    </div>
+    <div class="middle-row">
+      <div class="rect-db3" style="flex: 1;">
+        <div id="total_arrival_today" class="kpi-container">
+            KPI 1
+        </div>
+      </div>
+      <div class="rect-db3" style="flex: 1;">
+        <div id="total_departure_today" class="kpi-container">
+            KPI 2
+        </div>
+      </div>
+      <div class="rect-db3" style="flex: 1;">
+        <div id="departure_percent" class="kpi-container">
+            KPI 4
+        </div>
+      </div>
+      <div class="rect-db3" style="flex: 1;">
+        <div id="arrival_percent" class="kpi-container">
+            KPI 4
+        </div>
+      </div>
+    </div>
+    <div class="bottom-row">
+      <div class="rect-db3">
+        <div class="chart-container">
+          <canvas id="chart33" style="width: auto; height: auto;"></canvas>
+        </div>
+      </div>
+      <div class="rect-db3">
+        <div class="chart-container">
+          <canvas id="chart34" style="width: auto; height: auto;"></canvas>
+        </div>
+      </div>
+      <div class="rect-db3">
+        <div class="chart-container">
+          <canvas id="chart32" style="width: auto; height: auto;"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div style="margin-top: 20px; text-align: center;">
+    <button id="D3-generate-ai-report-button" style="padding: 10px 20px; border-radius: 5px; background-color: var(--card-bg); color: white; border: none; cursor: pointer;">Generate AI Report</button>
+</div>
+  <div id="db3-ai-container" class="rect-db3">
+      <div id="D3-ai-analysis"></div>
+      <button id="D3-retry-ai-analysis" style="margin-top: 10px;">Try Again</button>
+  </div>
+  <div id="D3-input-container" style="display: flex; flex-direction: column; width: 100%; margin-top: 10px;">
+      <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+          <div style="flex: 1;">
+          <input id="D3-ai-response-input" type="text" style=" width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: 1px solid #ccc; " placeholder="Enter your response here">
+          </div>
+
+          <div style="display: flex; margin-left: 5px; width: 400px;">
+          <div class="mb-3">
+              <label for="speech-lang-select"><strong>Select Language for Voice Input:</strong></label>
+              <select class="form-control" id="speech-lang-select" style="max-width: 300px;">
+              <option value="en-US">English (US)</option>
+              <option value="my-MM">Burmese (Myanmar)</option>
+              <option value="zh-CN">Chinese (Mandarin)</option>
+              <option value="th-TH">Thai</option>
+              <option value="ms-MY">Malay</option>
+              <option value="id-ID">Indonesian</option>
+              </select>
+      </div>
+          <button id="D3-text-to-speech" style="width: 100px; height: 50px; padding: 5px 0px 5px 0px; margin-left: 10px; border-radius: 5px; background-color:var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Listen</button>
+          <button id="D3-speech-to-text" style="width: 100px; height: 50px; padding: 5px 0px 5px 0px; margin-left: 10px; border-radius: 5px; background-color:var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Speak</button>
+          </div>
+      </div>
+
+      <div id="db3-last-ai-row" style="display: flex;">
+          <button id="D3-submit-response" style="width: 50%;margin-top: 10px; padding: 10px; border-radius: 5px; background-color: var(--card-bg); color: white; border: none; cursor: pointer;" class="rounded-pill px-3 py-2">Submit</button>
+          
+  </div>
+  </div>
+</body>
+</html>
+<!-- Multi-language Speech-to-Text Script -->
+<script>
+  document.querySelectorAll('button[id$="-speech-to-text"]').forEach(button => {
+    button.addEventListener('click', () => {
+      const inputId = button.id.replace('-speech-to-text', '-ai-response-input');
+      const inputElement = document.getElementById(inputId);
+      const langSelector = document.getElementById("speech-lang-select");
+      const selectedLang = langSelector ? langSelector.value : 'en-US';
+
+      if (!inputElement) return;
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Your browser does not support Speech Recognition. Please use Chrome.");
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = selectedLang;
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.start();
+
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        inputElement.value = transcript;
+      };
+
+      recognition.onerror = function(event) {
+        alert("Speech recognition error: " + event.error);
+      };
+    });
+  });
+</script>
+<script type="module">
+import { drawGroupedBarChart, drawPieChart, drawDonutChart } from '../drawChart.js';
+import { fetchClientRequest, fetchBookingsRequest } from '../APIcaller.js'
+import { generateHourlyBookingData, getMonthlyBookingCounts, getBookingsForDay } from '../processData.js';
+import { generateAiContent } from '../aiAnalysis.js'
+
+// AI START xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+let kpi_for_ai = new Proxy({}, {
+    set(target, key, value) {
+        target[key] = value;
+        // Removed automatic call to updateAIAnalysis()
+        return true;
+    }
+});
+
+document.getElementById('db3-ai-container').style.display = 'none';
+document.getElementById('D3-input-container').style.display = 'none';
+
+document.getElementById('D3-generate-ai-report-button').addEventListener('click', () => {
+    updateAIAnalysis();
+    document.getElementById('D3-input-container').style.display = 'block';
+    document.getElementById('db3-ai-container').style.display = 'block';
+    document.getElementById('D3-generate-ai-report-button').style.display = 'none';
+});
+// Store the last used prompt to use for retries
+let lastUsedPrompt = '';
+
+function updateKpiForAi(key, value) {
+    kpi_for_ai[key] = value;
+}
+async function updateAIAnalysis() {
+    const aiAnalysisElement = document.getElementById('D3-ai-analysis');
+    const retryButton = document.getElementById('D3-retry-ai-analysis');
+    const responseInput = document.getElementById('D3-ai-response-input');
+    const inputTaker = document.getElementById('D3-input-container');
+
+    if (!aiAnalysisElement) return;
+
+    // Hide retry button and input container initially
+    retryButton.style.display = 'none';
+    inputTaker.style.display = 'none';
+
+    // Show loading state
+    aiAnalysisElement.innerHTML = `
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Generating</p>
+        </div>
+    `;
+
+    // Define the default prompt
+    const defaultPrompt = `Generate analytic reports on:
+"Daily Guest Flow Report: Expected Check-ins & Check-outs"
+"Real-Time Arrivals & Departures with Future Trends"
+"Today's Hospitality Forecast: Predicted vs. Actual Guest Movements"`;
+
+    // Determine the prompt to use
+    const userPrompt = responseInput.value.trim();
+    
+    // Update last used prompt, prioritizing user input
+    lastUsedPrompt = userPrompt || lastUsedPrompt || defaultPrompt;
+
+    const chartDataString = Object.values(kpi_for_ai).filter(Boolean).join('\n');
+    const combinedPrompt = `${lastUsedPrompt}\nBased on the following booking data:\n${chartDataString}`;
+
+    try {
+        console.log(`Generating AI content`);
+        
+        // Improved timeout and error handling
+        const generatePromise = generateAiContent('D3-ai-analysis', combinedPrompt, '');
+        
+        const status = await Promise.race([
+            generatePromise,
+            new Promise((_, reject) => setTimeout(() => {
+                console.log(`Timeout`);
+                reject(new Error('Request timeout'));
+            }, 30000))
+        ]);
+
+        console.log(`Status:`, status);
+
+        if (status === 'success') {
+            inputTaker.style.display = 'flex';
+            return;
+        } else {
+            // Log more detailed error information if available
+            const errorDetails = await generatePromise.catch(err => err);
+            console.error(`Detailed error:`, errorDetails);
+            throw new Error('Failed to generate AI content');
+            retryButton.style.display = 'block';
+        }
+    } catch (error) {
+        console.error(`Failed:`, error);
+       
+        aiAnalysisElement.innerHTML = `
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Generating</p>
+            </div>
+        `;
+        inputTaker.style.display = 'none';
+    }
+}
+
+// Event listeners
+document.getElementById('D3-submit-response').addEventListener('click', () => {
+    updateAIAnalysis();
+});
+
+document.getElementById('D3-retry-ai-analysis').addEventListener('click', () => {
+    // Use the last used prompt when retrying
+    const responseInput = document.getElementById('D3-ai-response-input');
+    responseInput.value = lastUsedPrompt;
+    updateAIAnalysis();
+});
+
+document.getElementById('D3-text-to-speech').addEventListener('click', function() {
+    const aiAnalysisElement = document.getElementById('D3-ai-analysis');
+    const text = aiAnalysisElement.textContent || aiAnalysisElement.innerText;
+    const speechButton = this;
+
+    if (speechButton.textContent === 'Listen') {
+        const speech = new SpeechSynthesisUtterance(text);
+        speech.onend = () => {
+            speechButton.textContent = 'Listen';
+        };
+        window.speechSynthesis.speak(speech);
+        speechButton.textContent = 'Stop';
+    } else {
+        window.speechSynthesis.cancel();
+        speechButton.textContent = 'Listen';
+    }
+});
+
+// AI END xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+// Define color scheme
+const Arrival_Depature_Color = ["#009E73", "#0072B2", "#80FFDB", "#A3D8F4"];
+
+function getCurrentDate() {
+    const today = new Date();
+    return {
+        day: today.getDate(),
+        month: today.getMonth(),
+        year: today.getFullYear()
+    };
+}
+const currentDate = getCurrentDate();
+const bookingsForDay = getBookingsForDay(currentDate);
+populateBookingTable(bookingsForDay);
+// Set the date picker to the current date
+const datePicker = document.getElementById('date-picker');
+const today = new Date();
+datePicker.value = today.toISOString().split('T')[0];
+
+// Get references to KPI elements
+const total_arrival_today = document.getElementById('total_arrival_today');
+const total_departure_today = document.getElementById('total_departure_today');
+const arrival_percent = document.getElementById('arrival_percent');
+const departure_percent = document.getElementById('departure_percent');
+
+// Function to update charts based on selected date
+function updateCharts(selectedDate) {
+    const currentDate = getCurrentDate();
+    const isToday = selectedDate.day === currentDate.day && selectedDate.month === currentDate.month && selectedDate.year === currentDate.year;
+    const datata = generateHourlyBookingData(selectedDate);
+    datata.datasets[0].backgroundColor = Arrival_Depature_Color[0];  // Arrival color - green
+    datata.datasets[1].backgroundColor = Arrival_Depature_Color[1];  // Departure color - orange
+    drawGroupedBarChart('chart31', datata.labels, datata.datasets, 'Number of Arrivals and Departures');
+    updateKpiForAi('1', ` Here are the labels and datasets for hourly bookings on today, ${currentDate.year}-${currentDate.month + 1}-${currentDate.day}: 
+    hours- ${datata.labels}, 
+    dataset for ${datata.datasets[0].label}- ${datata.datasets[0].data}, 
+    dataset for ${datata.datasets[1].label}- ${datata.datasets[1].data}`);
+    const totalArrival = datata.datasets[0].data.reduce((sum, value) => sum + value, 0);
+    const totalDeparture = datata.datasets[1].data.reduce((sum, value) => sum + value, 0);
+    const donutData = {
+        labels: ['Total Arrivals', 'Total Departures'],
+        data: [totalArrival, totalDeparture],
+        backgroundColor: [Arrival_Depature_Color[0], Arrival_Depature_Color[1]]
+    };
+
+    const formattedDate = `${selectedDate.day}/${months[selectedDate.month]}/${selectedDate.year}`;
+
+    const totalArrivalCurrentMonth = getMonthlyBookingCounts(selectedDate.month + 1, selectedDate.year).arrivals;
+    const totalDepartureCurrentMonth = getMonthlyBookingCounts(selectedDate.month + 1, selectedDate.year).departures;
+    const arrivalPercentage = Math.round((totalArrival / totalArrivalCurrentMonth) * 100);
+    const departurePercentage = Math.round((totalDeparture / totalDepartureCurrentMonth) * 100);
+
+    if (isToday) {
+        total_arrival_today.innerHTML = `Total arrival today: ${totalArrival}`;
+        total_departure_today.innerHTML = `Total departure today: ${totalDeparture}`;
+        arrival_percent.innerHTML = `Today's arrivals are ${arrivalPercentage}% of this month's total arrivals`;
+        departure_percent.innerHTML = `Today's departures are ${departurePercentage}% of this month's total departures`;
+    } else {
+        total_arrival_today.innerHTML = `Total arrival on (${formattedDate}): ${totalArrival}`;
+        total_departure_today.innerHTML = `Total departure on (${formattedDate}): ${totalDeparture}`;
+        arrival_percent.innerHTML = `Arrivals on (${formattedDate}) are ${arrivalPercentage}% of this month's total arrivals`;
+        departure_percent.innerHTML = `Departures on (${formattedDate}) are ${departurePercentage}% of this month's total departures`;
+    }
+
+    drawDonutChart('chart32', donutData.labels, donutData);
+
+    const pieChartData_Arrival = {
+        labels: ['Today\'s Arrivals', 'Other Days\' Arrivals of current month'],
+        data: [totalArrival, totalArrivalCurrentMonth - totalArrival],
+        backgroundColor: [Arrival_Depature_Color[0], Arrival_Depature_Color[2]]
+    };
+
+    drawPieChart('chart33', pieChartData_Arrival.labels, pieChartData_Arrival, `Number and Percentage of Arrivals within ${selectedDate.year}, ${months[selectedDate.month]}`, 'top');
+
+    const pieChartData_Departure = {
+        labels: ['Today\'s Departures', 'Other Days\' Departure of current month'],
+        data: [totalDeparture, totalDepartureCurrentMonth - totalDeparture],
+        backgroundColor: [Arrival_Depature_Color[1], Arrival_Depature_Color[3]]
+    };
+
+    drawPieChart('chart34', pieChartData_Departure.labels, pieChartData_Departure, `Number and Percentage of Departures within ${selectedDate.year}, ${months[selectedDate.month]}`, 'top');
+
+    updateKpiForAi('2', ` The number of today's total arrivals are ${totalArrival} and today's departures are ${totalDeparture}`);
+    updateKpiForAi('3', ` Today's arrivals are ${arrivalPercentage}% of this month's total arrivals and today's departures are ${departurePercentage}% of this month's total departures`);
+}
+
+// Event listener for date picker
+datePicker.addEventListener('change', (event) => {
+    const selectedDate = new Date(event.target.value);
+    const dateObj = {
+        day: selectedDate.getDate(),
+        month: selectedDate.getMonth(),
+        year: selectedDate.getFullYear()
+    };
+
+    updateCharts(dateObj);
+
+    // Fetch bookings for the selected date and update the table
+    const bookingsForDay = getBookingsForDay(dateObj);
+    populateBookingTable(bookingsForDay);
+});
+
+// Initial chart setup for current date
+function initializeCharts() {
+    const currentDate = getCurrentDate();
+    const datata = generateHourlyBookingData(currentDate);
+    datata.datasets[0].backgroundColor = Arrival_Depature_Color[0];  // Arrival color - green
+    datata.datasets[1].backgroundColor = Arrival_Depature_Color[1];  // Departure color - orange
+    drawGroupedBarChart('chart31', datata.labels, datata.datasets, 'Number of Arrivals and Departures');
+
+    const totalArrival = datata.datasets[0].data.reduce((sum, value) => sum + value, 0);
+    const totalDeparture = datata.datasets[1].data.reduce((sum, value) => sum + value, 0);
+    const donutData = {
+        labels: ['Total Arrivals', 'Total Departures'],
+        data: [totalArrival, totalDeparture],
+        backgroundColor: [Arrival_Depature_Color[0], Arrival_Depature_Color[1]]
+    };
+
+    total_arrival_today.innerHTML = `Total arrival today: ${totalArrival}`;
+    total_departure_today.innerHTML = `Total departure today: ${totalDeparture}`;
+
+    drawDonutChart('chart32', donutData.labels, donutData);
+
+    const totalArrivalCurrentMonth = getMonthlyBookingCounts(currentDate.month + 1, currentDate.year).arrivals;
+    const pieChartData_Arrival = {
+        labels: ['Today\'s Arrivals', 'Other Days\' Arrivals of current month'],
+        data: [totalArrival, totalArrivalCurrentMonth - totalArrival],
+        backgroundColor: [Arrival_Depature_Color[0], Arrival_Depature_Color[2]]
+    };
+
+    drawPieChart('chart33', pieChartData_Arrival.labels, pieChartData_Arrival, `Number and Percentage of Arrivals within ${currentDate.year}, ${months[currentDate.month]}`, 'top');
+
+    const totalDepartureCurrentMonth = getMonthlyBookingCounts(currentDate.month + 1, currentDate.year).departures;
+    const pieChartData_Departure = {
+        labels: ['Today\'s Departures', 'Other Days\' Departure of current month'],
+        data: [totalDeparture, totalDepartureCurrentMonth - totalDeparture],
+        backgroundColor: [Arrival_Depature_Color[1], Arrival_Depature_Color[3]]
+    };
+
+    drawPieChart('chart34', pieChartData_Departure.labels, pieChartData_Departure, `Number and Percentage of Departures within ${currentDate.year}, ${months[currentDate.month]}`, 'top');
+
+    const arrivalPercentage = Math.round((totalArrival / totalArrivalCurrentMonth) * 100);
+    const departurePercentage = Math.round((totalDeparture / totalDepartureCurrentMonth) * 100);
+
+    arrival_percent.innerHTML = `Today's arrivals are ${arrivalPercentage}% of this month's total arrivals`;
+    departure_percent.innerHTML = `Today's departures are ${departurePercentage}% of this month's total departures`;
+    updateKpiForAi('2', ` The number of today's total arrivals are ${totalArrival} and today's departures are ${totalDeparture}`);
+    updateKpiForAi('3', ` Today's arrivals are ${arrivalPercentage}% of this month's total arrivals and today's departures are ${departurePercentage}% of this month's total departures`);
+}
+
+function populateBookingTable(bookings) {
+    const tableBody = document.getElementById('db3-table-body');
+    tableBody.innerHTML = ''; // Clear existing rows
+
+    bookings.forEach(booking => {
+        const row = document.createElement('tr');
+
+        const bookingIdCell = document.createElement('td');
+        bookingIdCell.textContent = booking.bookingId;
+        row.appendChild(bookingIdCell);
+
+        const clientIdCell = document.createElement('td');
+        clientIdCell.textContent = booking.clientId;
+        row.appendChild(clientIdCell);
+
+        const timeCell = document.createElement('td');
+        timeCell.textContent = booking.time;
+        row.appendChild(timeCell);
+
+        const actionCell = document.createElement('td');
+        actionCell.textContent = booking.action;
+        actionCell.style.backgroundColor = booking.action === 'Arrive' ? '#2ecc71' : '#e74c3c'; // Green for Arrive, Red for Depart
+        row.appendChild(actionCell);
+
+        tableBody.appendChild(row);
+    });
+}
+// Initialize charts when the page loads
+initializeCharts();
+</script>

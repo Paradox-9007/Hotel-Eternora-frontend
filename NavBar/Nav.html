@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+   
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+    
+      <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    
+    <style>
+      @import url('https://fonts.cdnfonts.com/css/lovelace');
+      :root {
+        --nav-text-light: #000;
+        --nav-text-dark: #fff;
+        --navtoggler:#6b6f8d;
+        --navtoggler-color:white;
+
+      }
+      body {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        transition: background-color var(--transition-speed),
+          color var(--transition-speed);
+      }
+
+      body.dark-mode .navbar-nav .nav-item .btn {
+        color: var(--nav-text-dark) !important;
+        --navtoggler-color:#484b6a;
+      }
+
+      body.dark-mode .navbar-nav .nav-item .btn:hover {
+        background-color: #343a40 !important;
+        color: var(--nav-text-dark) !important;
+      }
+
+      body:not(.dark-mode) .navbar-nav .nav-item .btn {
+        color: var(--nav-text-light) !important;
+      }
+
+      body:not(.dark-mode) .navbar-nav .nav-item .btn:hover {
+        background-color: #e2e6ea !important;
+        color: var(--nav-text-light) !important;
+
+      }
+
+      .navbar {
+        background-color: transparent !important;
+        color: var(--navbar-text) !important;
+        box-shadow: 0 2px 10px var(--shadow-color);
+        transition: background-color var(--transition-speed);
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+      }
+      .navbar-brand,
+      .nav-link {
+        color: var(--navbar-text) !important;
+        transition: color var(--transition-speed);
+        
+      }
+      .dropdown-menu {
+        background-color: var(--card-bg);
+        border-color: var(--border-color);
+      }
+      .dropdown-item {
+        color: var(--text-primary);
+      }
+      .dropdown-item:hover {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+      }
+      /* Center navigation items */
+      .navbar-nav.mx-auto {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        gap: 0.5rem;
+      }
+      .navbar-nav.mx-auto .nav-item {
+        text-align: center;
+      }
+      
+      /* Change navbar buttoncolor */
+      .navbar-nav.mx-auto .nav-item .btn {
+        background-color: var(--btn-bg) !important;
+        color:white;
+      }
+      
+      .navbar-nav ms-auto{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+        box-shadow: 0 2px 10px var(--shadow-color);
+        background-color: var(--bg-primary);
+        color: var(--navbar-text);
+        transition: all var(--transition-speed);
+      }
+      /* Add styles for navbar-toggler */
+      .navbar-toggler {
+        border: 1px solid var(--nav-text-light);
+        background: var(--navtoggler);
+        color: var(--navtoggler-color);
+      }
+
+      .navbar-toggler-icon {
+        background-image: none;
+        position: relative;
+      }
+
+      .navbar-toggler-icon::before {
+        content: '☰';
+        font-size: 1.5rem;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: var(--text-primary);
+      }
+
+      .navbar.show-nav {
+  background-color: var(--bg-primary) !important;
+}
+
+.navbar-collapse {
+  transition: all 0.3s ease;
+}
+
+/*Logo Name */
+  
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: 'Lovelace';
+  background: #C5C9E1;
+
+
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.navbar-brand:hover {
+  transform: scale(1.05);
+ background: linear-gradient(45deg, #fff, #e2e2e2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.dark-mode .navbar-brand {
+  background: #C5C9E1;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg bg-transparent">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="../Home/Home.html">
+          <img src="../hackathon/Eternorawithleaf.png" width="50" height="50" class="rounded-circle img-fluid developer-img" /> Eternora
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNavDropdown"
+          aria-controls="navbarNavDropdown"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul class="navbar-nav mx-auto">
+            <!-- Changed ms-auto to mx-auto for center alignment -->
+            <li class="nav-item">
+              <a
+                class="btn  rounded-pill px-4 py-2 text-uppercase fw-semibold"
+                href="../Home/Home.html"
+                >Home</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="btn rounded-pill px-4 py-2 text-uppercase fw-semibold"
+                href="../dashboard.html"
+                >Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="btn rounded-pill px-4 py-2 text-uppercase fw-semibold"
+                href="../data-source/data-source.html"
+                >Datasource</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="btn rounded-pill px-4 py-2 text-uppercase fw-semibold"
+                href="../News/news.html"
+                >News</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="btn rounded-pill px-4 py-2 text-uppercase fw-semibold" href="../About/about.html" >About</a>
+            </li>
+            <!-- Language button -->
+            <li class="nav-item">
+              <a class="btn rounded-pill px-4 py-2 text-uppercase fw-semibold" href="javascript:void(0);" onclick="toggleTranslate()" ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-globe" viewBox="0 0 16 16">
+                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855A8 8 0 0 0 5.145 4H7.5zM4.09 4a9.3 9.3 0 0 1 .64-1.539 7 7 0 0 1 .597-.933A7.03 7.03 0 0 0 2.255 4zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a7 7 0 0 0-.656 2.5zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5zM8.5 5v2.5h2.99a12.5 12.5 0 0 0-.337-2.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5zM5.145 12q.208.58.468 1.068c.552 1.035 1.218 1.65 1.887 1.855V12zm.182 2.472a7 7 0 0 1-.597-.933A9.3 9.3 0 0 1 4.09 12H2.255a7 7 0 0 0 3.072 2.472M3.82 11a13.7 13.7 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5zm6.853 3.472A7 7 0 0 0 13.745 12H11.91a9.3 9.3 0 0 1-.64 1.539 7 7 0 0 1-.597.933M8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855q.26-.487.468-1.068zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.7 13.7 0 0 1-.312 2.5m2.802-3.5a7 7 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7 7 0 0 0-3.072-2.472c.218.284.418.598.597.933M10.855 4a8 8 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4z"/>
+              </svg></a>
+            </li>
+
+            <li class="nav-item">
+              <!-- Theme toggle button -->
+              <a
+                class="btn  rounded-pill px-3 py-2"
+                href="javascript:void(0);"
+                onclick="toggleTheme()"
+              >
+                <svg
+                  id="sunIcon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-brightness-high-fill"
+                >
+                  <path
+                    d="M12 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"
+                  />
+                </svg>
+                <svg
+                  id="moonIcon"
+                  style="display: none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-moon-stars"
+                >
+                  <path
+                    d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278M4.858 1.311A7.27 7.27 0 0 0 1.025 7.71c0 4.02 3.279 7.276 7.319 7.276a7.32 7.32 0 0 0 5.205-2.162q-.506.063-1.029.063c-4.61 0-8.343-3.714-8.343-8.29 0-1.167.242-2.278.681-3.286"
+                  />
+                </svg>
+              </a>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <div class="gtranslate_wrapper"></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // Language switching functionality is now handled in nav.js
+    </script>
+
+    <script>
+      function toggleTheme() {
+        const sun = document.getElementById("sunIcon");
+        const moon = document.getElementById("moonIcon");
+
+        // Toggle dark mode class
+        document.body.classList.toggle("dark-mode");
+
+        // Toggle icon visibility
+        if (document.body.classList.contains("dark-mode")) {
+          sun.style.display = "inline";
+          moon.style.display = "none";
+        } else {
+          sun.style.display = "none";
+          moon.style.display = "inline";
+        }
+      }
+    </script>
+    
+  </body>
+</html>
