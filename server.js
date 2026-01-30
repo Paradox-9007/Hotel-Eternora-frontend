@@ -38,7 +38,7 @@ app.post('/api/analyze', async (req, res) => {
       const error = await response.text();
       return res.status(response.status).json({ error });
     }
-
+    
     const data = await response.json();
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
