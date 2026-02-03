@@ -200,11 +200,6 @@ async function generatePDF() {
   const canvas = await html2canvas(dashboard, { scale: 2 });
   const imgData = canvas.toDataURL('image/png');
 
-  // Restore visibility
-  aiContainers.forEach(el => {
-    el.style.display = el.dataset.prevDisplay || 'none';
-  });
-
   const aiText =
     document.getElementById("D1-ai-analysis")?.innerText ||
     document.getElementById("D2-ai-analysis")?.innerText ||
