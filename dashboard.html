@@ -187,7 +187,7 @@
     const canvas = await html2canvas(dashboard);
     const imgData = canvas.toDataURL('image/png');
 
-    const aiText = document.getElementById("db1-ai-container")?.innerText || "No AI-generated summary found.";
+    const aiText = document.querySelector(".ai-analysis")?.innerText || "No AI-generated summary found.";
 
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pageWidth = pdf.internal.pageSize.getWidth();
