@@ -180,6 +180,20 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
+    function formatAiTextForPdf(text) {
+  return text
+    // Headings
+    .replace(/^##\s*(.*)$/gm, '\n\n$1\n')
+    // Remove markdown bold markers
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    // Clean bullets
+    .replace(/^\s*[-*]\s+/gm, '• ')
+    // Normalize line breaks
+    .replace(/\r\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 async function generatePDF() {
   const { jsPDF } = window.jspdf;
 
@@ -196,7 +210,7 @@ async function generatePDF() {
   // Wait for browser reflow
   await new Promise(r => setTimeout(r, 300));
 
-  const dashboard = document.querySelector('body');
+  const dashboard = document.querySelector('.content-section.active');
   const canvas = await html2canvas(dashboard, { scale: 2 });
   const imgData = canvas.toDataURL('image/png');
 
@@ -223,46 +237,36 @@ async function generatePDF() {
   pdf.setFontSize(16);
   pdf.text("AI Generated Analysis Summary", 10, 20);
 
-const paragraphs = aiText
-  .replace(/\r\n/g, '\n')
-  .split(/\n\s*\n/);
+  const formattedText = formatAiTextForPdf(aiText);
 
+const paragraphs = formattedText.split('\n\n');
 let y = 30;
 const pageHeight = pdf.internal.pageSize.getHeight();
-const marginLeft = 10;
-const lineHeight = 6;
-const paragraphSpacing = 4;
 
-paragraphs.forEach(paragraph => {
-  const isHeading =
-    paragraph.startsWith('---') ||
-    /^\d+\.\s/.test(paragraph) ||
-    /Executive Summary|Detailed Analysis|Overview/i.test(paragraph);
+paragraphs.forEach(p => {
+  const isHeading = p === p.toUpperCase() || p.length < 80;
 
-  if (isHeading) {
-    pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(13);
-  } else {
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(11);
-  }
+  pdf.setFont(isHeading ? 'helvetica' : 'helvetica', isHeading ? 'bold' : 'normal');
+  pdf.setFontSize(isHeading ? 13 : 11);
 
-  const lines = pdf.splitTextToSize(paragraph, 190);
+  const lines = pdf.splitTextToSize(p, 190);
 
   lines.forEach(line => {
     if (y > pageHeight - 20) {
       pdf.addPage();
       y = 20;
     }
-    pdf.text(line, marginLeft, y);
-    y += lineHeight;
+    pdf.text(line, 10, y);
+    y += 6;
   });
 
-  y += paragraphSpacing;
+  y += 4;
 });
+
 
   pdf.save("hotel-eternora-report.pdf");
 }
+
 
 </script>
 </body>
