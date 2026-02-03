@@ -210,7 +210,7 @@ async function generatePDF() {
   // Wait for browser reflow
   await new Promise(r => setTimeout(r, 300));
 
-  const dashboard = document.querySelector('.content-section.active');
+  const dashboard = document.querySelector('body');
   const canvas = await html2canvas(dashboard, { scale: 2 });
   const imgData = canvas.toDataURL('image/png');
 
