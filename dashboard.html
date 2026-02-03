@@ -180,66 +180,64 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-  async function generatePDF() {
-    const { jsPDF } = window.jspdf;
+async function generatePDF() {
+  const { jsPDF } = window.jspdf;
 
-    const dashboard = document.querySelector('main');
-    const canvas = await html2canvas(dashboard);
-    const imgData = canvas.toDataURL('image/png');
+  // FORCE AI containers to be visible
+  const aiContainers = document.querySelectorAll(
+    '[id^="db"][id$="-ai-container"], [id^="D"][id$="-ai-analysis"]'
+  );
 
-    const aiText = document.getElementById("db1-ai-container")?.innerText ||
-    document.getElementById("db2-ai-container")?.innerText ||
-    document.getElementById("db3-ai-container")?.innerText ||
-    document.getElementById("db4-ai-container")?.innerText ||
-    document.getElementById("db5-ai-container")?.innerText ||
-    document.getElementById("db6-ai-container")?.innerText ||
-    document.getElementById("db7-ai-container")?.innerText ||
-    document.getElementById("db8-ai-container")?.innerText ||
-    document.getElementById("db9-ai-container")?.innerText || "No AI-generated summary found.";
+  aiContainers.forEach(el => {
+    el.dataset.prevDisplay = el.style.display;
+    el.style.display = 'block';
+  });
 
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const imgProps = pdf.getImageProperties(imgData);
-    const imgHeight = (pageWidth * imgProps.height) / imgProps.width;
+  // Wait for browser reflow
+  await new Promise(r => setTimeout(r, 300));
 
-    pdf.addImage(imgData, 'PNG', 0, 10, pageWidth, imgHeight);
-    // Add AI summary on new pages - properly split across multiple pages
-    pdf.addPage();
-    pdf.setFontSize(16);
-    pdf.setTextColor(40);
-    pdf.text("AI Generated Analysis Summary", 10, 20);
-    
-    // Split text and add across multiple pages
-    pdf.setFontSize(11);
-    pdf.setTextColor(60);
-    
-    const splitText = pdf.splitTextToSize(aiText, 190);
-    const lineHeight = 7;
-    const pageHeight_content = pdf.internal.pageSize.getHeight();
-    const marginTop = 30;
-    const marginBottom = 10;
-    const availableHeight = pageHeight_content - marginTop - marginBottom;
-    const maxLinesPerPage = Math.floor(availableHeight / lineHeight);
-    
-    let currentLine = 0;
-    let yPosition = marginTop;
-    
-    for (let i = 0; i < splitText.length; i++) {
-      // Check if we need a new page
-      if (currentLine >= maxLinesPerPage) {
-        pdf.addPage();
-        yPosition = marginTop;
-        currentLine = 0;
-      }
-      
-      pdf.text(splitText[i], 10, yPosition);
-      yPosition += lineHeight;
-      currentLine++;
+  const dashboard = document.querySelector('main');
+  const canvas = await html2canvas(dashboard, { scale: 2 });
+  const imgData = canvas.toDataURL('image/png');
+
+  // Restore visibility
+  aiContainers.forEach(el => {
+    el.style.display = el.dataset.prevDisplay || 'none';
+  });
+
+  const aiText =
+    document.getElementById("D1-ai-analysis")?.innerText ||
+    document.getElementById("D2-ai-analysis")?.innerText ||
+    document.getElementById("D3-ai-analysis")?.innerText ||
+    "No AI-generated summary found.";
+
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const imgProps = pdf.getImageProperties(imgData);
+  const imgHeight = (pageWidth * imgProps.height) / imgProps.width;
+
+  pdf.addImage(imgData, 'PNG', 0, 10, pageWidth, imgHeight);
+  pdf.addPage();
+
+  pdf.setFontSize(16);
+  pdf.text("AI Generated Analysis Summary", 10, 20);
+
+  pdf.setFontSize(11);
+  const splitText = pdf.splitTextToSize(aiText, 190);
+
+  let y = 30;
+  splitText.forEach(line => {
+    if (y > 280) {
+      pdf.addPage();
+      y = 20;
     }
+    pdf.text(line, 10, y);
+    y += 7;
+  });
 
-    pdf.save("hotel-eternora-report.pdf");
-  }
+  pdf.save("hotel-eternora-report.pdf");
+}
+
 </script>
 </body>
 </html>
