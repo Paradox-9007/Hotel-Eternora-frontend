@@ -1,54 +1,35 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
+import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+import { PAGE_ROUTE_FILES, PAGE_PATHS } from "./shared/config/siteRoutes.js";
+import { handleAnalyzeRequest } from "./shared/server/analyzeHandler.js";
+import { handleNewsRequest } from "./shared/server/newsHandler.js";
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static('.'));
+app.use(express.static(__dirname));
 
-const API_KEY = process.env.GEMINI_API_KEY;
-const API_VERSION = 'v1';
-const MODEL_NAME = 'gemini-2.5-flash';
+app.post("/api/analyze", handleAnalyzeRequest);
+app.get("/api/news", handleNewsRequest);
+app.get("/api/news/:category", handleNewsRequest);
 
-app.post('/api/analyze', async (req, res) => {
-  try {
-    const { prompt } = req.body;
-
-    if (!prompt) {
-      return res.status(400).json({ error: 'Prompt required' });
-    }
-
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/${API_VERSION}/models/${MODEL_NAME}:generateContent?key=${API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: prompt }] }]
-        })
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.text();
-      return res.status(response.status).json({ error });
-    }
-    
-    const data = await response.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-    res.json({ success: true, data: text });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+PAGE_ROUTE_FILES.forEach(({ route, file }) => {
+  app.get(route, (_req, res) => {
+    res.sendFile(path.join(__dirname, file));
+  });
 });
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Dashboard: http://localhost:${PORT}/dashboard.html`);
+  console.log(`Home: http://localhost:${PORT}${PAGE_PATHS.home}`);
+  console.log(`Dashboard: http://localhost:${PORT}${PAGE_PATHS.dashboard}`);
 });

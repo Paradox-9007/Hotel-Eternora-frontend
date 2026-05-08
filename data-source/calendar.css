@@ -1,280 +1,497 @@
+/* calendar.css - Modern Compact Calendar */
 
 body {
-    background-color: #f4f6f9;
-    font-family: 'Arial', sans-serif;
-    color: black;
+  color: var(--main-text);
 }
 
+.data-source-page {
+  padding-top: 72px;
+}
+
+/* ─────────────────────────────────────────────
+   Calendar Shell
+───────────────────────────────────────────── */
+
+.calendar-shell {
+  background: rgba(255, 255, 255, 0.78);
+
+  border-radius: 24px;
+
+  padding: 18px;
+
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.08);
+
+  backdrop-filter: blur(12px);
+
+  max-width: 960px;
+
+  margin: 0 auto;
+}
+
+/* ─────────────────────────────────────────────
+   Controls
+───────────────────────────────────────────── */
+
 .calendar-controls {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 20px;
-    gap: 12px;
-    padding: 16px;
-    background: var(--btn-bg);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    color:var(--main-text);
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(160px, 1fr))
+    auto;
+
+  gap: 10px;
+
+  padding: 14px;
+
+  background: #1f2b3d;
+
+  border-radius: 18px;
+
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.control-group label {
+  display: inline-block;
+
+  font-size: 0.86rem;
+
+  font-weight: 700;
+
+  color: #f4f4f4;
+}
+
+.control-group .form-select {
+  min-height: 44px;
+
+  border-radius: 12px;
+
+  border: 1px solid rgba(0, 0, 0, 0.08);
+
+  font-size: 0.95rem;
+
+  box-shadow: none;
+}
+
+.calendar-action-wrap {
+  display: flex;
+  align-items: flex-end;
+}
+
+.calendar-action-btn {
+  min-height: 44px;
+
+  border-radius: 999px;
+
+  border: none;
+
+  color: white;
+
+  background: #6178a6;
+
+  padding: 0 18px;
+
+  font-size: 0.88rem;
+
+  transition: 0.2s ease;
+}
+
+.calendar-action-btn:hover {
+  background: #4e648d;
+}
+
+
+/* ─────────────────────────────────────────────
+   Legend
+───────────────────────────────────────────── */
+
+.legend-swatch {
+  width: 14px;
+  height: 14px;
+
+  border-radius: 50%;
+}
+
+.legend-swatch-default {
+  background: #eaf4e2;
+}
+
+.legend-swatch-holiday {
+  background: #f6c3d7;
+}
+
+.legend-swatch-today {
+  background: #7ab2d3;
+}
+
+/* ─────────────────────────────────────────────
+   Heading
+───────────────────────────────────────────── */
+
+.calendar-heading-block {
+  margin-top: 20px;
+}
+
+.calendar-heading-block h4 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: rgb(52, 52, 52);
+}
+
+.calendar-heading-block p {
+  color: rgba(52, 52, 52, 0.65);
+
+  font-size: 0.95rem;
+}
+
+/* ─────────────────────────────────────────────
+   Calendar Container
+───────────────────────────────────────────── */
+
+.calendar-container {
+  margin-top: 16px;
 }
 
 .calendar-month {
-    border: none;
-    margin: 5px auto;
-    padding: 16px;
-    width: 90%;
-    max-width: 500px;
-    background-color:var(--btn-bg);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    border-radius: 12px;
-    transition: transform 0.2s ease;
+  border: none;
+
+  margin: 0 auto;
+
+  padding: 16px;
+
+  width: 100%;
+
+  max-width: 620px;
+
+  background-color: rgba(255, 255, 255, 0.96);
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+  border-radius: 20px;
 }
 
-.calendar-month:hover {
-    transform: translateY(-2px);
+/* ─────────────────────────────────────────────
+   Month Header
+───────────────────────────────────────────── */
+
+.month-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 14px;
 }
 
 .month-header h4 {
-    text-align: center;
-    margin-bottom: 15px;
-    background-color: var(--header-bg);
-    padding: 8px;
-    border-radius: 4px;
-    color: black;
-    font-family: 'Lora', serif
+  margin: 0;
+
+  font-size: 1.3rem;
+
+  font-weight: 700;
+
+  color: #1f2b3d;
 }
 
+.month-badge {
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 6px 10px;
+
+  border-radius: 999px;
+
+  background: #6178a6;
+
+  color: white;
+
+  font-size: 0.72rem;
+
+  font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────
+   Calendar Grid
+───────────────────────────────────────────── */
+
 .calendar-days {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    background-color: var(--month-bg)!important;
-    padding: 8px;
-   font-family: 'Lora', serif;
+  display: grid;
+
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+
+  gap: 5px;
+
+  padding: 2px;
 }
 
 .day-header {
-    font-weight: bold;
-    text-align: center;
-    background: var(--other-month-bg);
-    padding: 4px;
-    border-radius: 4px;
-    background-color: var(--header-bg)!important;
-    color: black;
+  font-weight: 700;
+
+  text-align: center;
+
+  padding: 8px 4px;
+
+  border-radius: 10px;
+
+  background-color: #1f2b3d;
+
+  color: white;
+
+  font-size: 0.82rem;
 }
 
+/* ─────────────────────────────────────────────
+   Calendar Cells
+───────────────────────────────────────────── */
+
 .calendar-cell {
-    border: 1px solid #1a1b1b;
-    min-height: 80px;
-    position: relative;
-    padding: 8px;
-    background-color: var(--day-bg)!important;
-    /* color: var(--future-day-color); */
-    color:black;
-    border-radius: 8px;
-    transition: all 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+
+  min-height: 82px;
+
+  position: relative;
+
+  padding: 8px;
+
+  background-color: #edf5e8;
+
+  color: #1f2b3d;
+
+  border-radius: 12px;
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+
+  overflow: hidden;
 }
 
 .calendar-cell:hover {
-    background-color: #f8f9fa !important;
-    transform: scale(1.02);
+  transform: translateY(-2px);
+
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
 }
+
+.calendar-cell.is-empty {
+  background: transparent;
+
+  border-style: dashed;
+
+  opacity: 0.18;
+}
+
+/* ─────────────────────────────────────────────
+   Day Number
+───────────────────────────────────────────── */
 
 .day-number {
-    font-weight: bold;
+  font-weight: 700;
+
+  margin-bottom: 5px;
+
+  font-size: 0.95rem;
+
+  color: #24364d;
 }
+
+/* ─────────────────────────────────────────────
+   Holiday Cell
+───────────────────────────────────────────── */
 
 .holiday {
-    background-color: var(--weekend-bg) !important;
-    color: var(--weekend-color) !important;
+  background-color: #f6d0df;
+
+  color: #7c2e4d;
 }
+
+/* ─────────────────────────────────────────────
+   Today Cell
+───────────────────────────────────────────── */
 
 .today {
-    background-color: var(--today-bg)!important;
-    color: var(--today-color)!important;
+  background-color: #84bad8;
+
+  color: #082433;
+
+  border: 1px solid #4b8aac;
 }
+
+/* ─────────────────────────────────────────────
+   Holiday Label
+───────────────────────────────────────────── */
 
 .holiday-label {
-    font-size: 0.75em;
+  font-size: 0.7rem;
+
+  line-height: 1.35;
+
+  font-weight: 500;
+
+  opacity: 0.92;
 }
+
+/* ─────────────────────────────────────────────
+   Carousel
+───────────────────────────────────────────── */
 
 #carouselExample {
-    display: flex;
-    align-items: center;
-    position: relative;
-    padding: 0;
-    margin: 20px 0;
+  position: relative;
+
+  margin: 12px 0 0;
 }
 
-.carousel-control-prev {
-    left: 0;
-}
-
-.carousel-control-next {
-    right: 0;
-}
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-    position: absolute;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    background-color: gray;
-    border-radius: 50%;
-    opacity: 1;
-    transition: all 0.2s ease;
-    top: 50%;
-    transform: translateY(20px);
-}
-
-.carousel-control-prev-icon:hover,
-.carousel-control-next-icon:hover {
-    opacity: 1;
-    transform: scale(1.1);
-    background-color: var(--button-hover-bg);
-
-}
-
-.carousel-control-prev,
-.carousel-control-next {
-    width: 30px;
-    height: 30px;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-}
 .carousel-inner {
-    width: 90%;
-    margin: 0 auto;
-    background-color: var(--CalendarCarol)!important;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 100%;
+
+  margin: 0 auto;
+
+  border-radius: 18px;
 }
 
 .carousel-item {
-    padding: 20px;
-    flex: 1;
+  padding: 6px 56px;
 }
 
+/* ─────────────────────────────────────────────
+   Carousel Controls
+───────────────────────────────────────────── */
 
-/* Add responsive styles */
-@media (min-width: 820px) and (max-width: 1024px) {
-    .calendar-month {
-        width: 95%;
-        padding: 12px;
-    }
-    .calendar-days {
-        gap: 5px;
-        padding: 6px;
-    }
+.carousel-control-prev,
+.carousel-control-next {
+  width: 36px;
+  height: 36px;
 
-    .calendar-cell {
-        min-height: 65px;
-        font-size: 0.85em;
-    }
+  top: 50%;
 
-    .holiday-label {
-        font-size: 0.7em;
-        line-height: 1.2;
-    }
+  transform: translateY(-50%);
 }
 
-@media (max-width: 819px) {
-    .calendar-month {
-        width: 100%;
-        padding: 8px;
-    }
-    
-    .calendar-days {
-        gap: 2px;
-        padding: 4px;
-    }
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  border-radius: 50%;
 
-    .calendar-cell {
-        min-height: 55px;
-        font-size: 0.75em;
-        padding: 3px;
-    }
+  width: 36px;
+  height: 36px;
 
-    .holiday-label {
-        font-size: 0.65em;
-        line-height: 1.1;
-    }
+  background-color: rgba(70, 70, 70, 0.65);
 
-    .day-number {
-        font-size: 0.9em;
-    }
+  opacity: 1;
 }
+
+/* ─────────────────────────────────────────────
+   Tablet
+───────────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+  .calendar-controls {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .calendar-action-wrap {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Mobile
+───────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .data-source-page {
+    padding-top: 88px;
+  }
+
+  .calendar-shell {
+    padding: 14px;
+
+    border-radius: 18px;
+  }
+
+  .calendar-controls {
+    grid-template-columns: 1fr;
+
+    padding: 12px;
+  }
+
+  .calendar-action-btn {
+    width: 100%;
+  }
+
+  .calendar-month {
+    max-width: 100%;
+
+    padding: 12px;
+  }
+
+  .month-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .calendar-days {
+    gap: 4px;
+  }
+
+  .calendar-cell {
+    min-height: 62px;
+
+    padding: 6px;
+  }
+
+  .holiday-label {
+    font-size: 0.58rem;
+  }
+
+  .carousel-item {
+    padding: 6px 24px;
+  }
+
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 30px;
+    height: 30px;
+  }
+
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Small Phones
+───────────────────────────────────────────── */
+
 @media (max-width: 480px) {
-    .calendar-days {
-        gap: 1px;
-        padding: 2px;
-    }
+  .day-header {
+    font-size: 0.68rem;
 
-    .calendar-cell {
-        min-height: 45px;
-        font-size: 0.7em;
-        padding: 2px;
-    }
+    padding: 7px 3px;
+  }
 
-    .holiday-label {
-        font-size: 0.6em;
-        line-height: 1;
-    }
-}
+  .calendar-cell {
+    min-height: 58px;
 
-/* Add responsive styles for month header */
-@media (max-width: 1024px) {
-    .month-header h4 {
-        font-size: 1.5rem;
-        padding: 6px;
-        margin-bottom: 12px;
-    }
-}
+    padding: 5px;
+  }
 
-@media (max-width: 768px) {
-    .month-header h4 {
-        font-size: 1.2rem;
-        padding: 5px;
-        margin-bottom: 10px;
-    }
-}
+  .day-number {
+    font-size: 0.82rem;
+  }
 
-
-/* Add responsive styles for carousel controls */
-@media (max-width: 1024px) {
-    .carousel-control-prev-icon,
-    .carousel-control-next-icon {
-        width: 35px;
-        height: 35px;
-        transform: translateY(15px);
-    }
-
-    .carousel-control-prev,
-    .carousel-control-next {
-        width: 25px;
-        height: 25px;
-    }
-}
-
-@media (max-width: 768px) {
-    .carousel-control-prev-icon,
-    .carousel-control-next-icon {
-        width: 30px;
-        height: 30px;
-        transform: translateY(10px);
-    }
-
-    .carousel-control-prev,
-    .carousel-control-next {
-        width: 20px;
-        height: 20px;
-    }
-
-    .carousel-control-prev {
-        left: -10px;
-    }
-
-    .carousel-control-next {
-        right: -10px;
-    }
+  .holiday-label {
+    font-size: 0.54rem;
+  }
 }

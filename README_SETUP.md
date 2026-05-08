@@ -1,17 +1,18 @@
 # Hotel Eternora Analytics Dashboard
 
 A professional analytics dashboard for Hotel Eternora featuring:
-- Real-time booking and client analytics
-- AI-powered insights using Gemini API
+- Local booking and client analytics for faster dashboard loads
+- AI-powered insights using Gemini
+- Travel news feeds powered by NewsData.io
 - Interactive charts and data visualization
-- Responsive design with colorblind-friendly colors
+- Responsive layouts with colorblind-friendly colors
 
 ## Features
 
-- **Dashboard Analytics**: Track occupancy, revenue, and guest metrics
+- **Dashboard Analytics**: Track occupancy, revenue, arrivals, departures, guest mix, and unit performance
 - **AI Assistant**: Get detailed analytical reports powered by Google Gemini
-- **Data Visualization**: Interactive charts for bookings and performance metrics
-- **Responsive Design**: Works on desktop and mobile devices
+- **Travel News**: Browse travel trends, technology, and association updates from NewsData.io
+- **Responsive Design**: Works across desktop, tablet, and mobile screens
 - **PDF Export**: Download dashboard reports as PDF
 
 ## Setup
@@ -21,40 +22,45 @@ A professional analytics dashboard for Hotel Eternora featuring:
    ```bash
    npm install
    ```
-
 3. Create a `.env` file in the root directory:
    ```
-   GEMINI_API_KEY=your_api_key_here
-   PORT=3000
-   NODE_ENV=development
+   GEMINI_API_KEY=your_gemini_api_key_here
+   NEWS_API_KEY=your_newsdata_api_key_here
    ```
-
 4. Start the development server:
    ```bash
    npm start
    ```
+5. Open your browser to `http://localhost:3000/` or `http://localhost:3000/home`
 
-5. Open your browser to `http://localhost:3000`
+## Routes
+
+- `/` and `/home` -> Home page
+- `/dashboard` -> Dashboard page
+- `/data-source` -> Calendar and data tables
+- `/news` -> Travel news page
+- `/about` -> About page
 
 ## Project Structure
 
-```
-├── dashboard.html          # Main dashboard page
-├── dashboards/            # Individual dashboard views
-├── data-source/          # Data source pages (calendar, tables)
-├── Home/                 # Home page
-├── News/                 # News page
-├── About/                # About page
-├── NavBar/               # Navigation components
-├── apiAnalysis.js        # AI analysis module
-├── APIcaller.js          # API calling utilities
-├── drawChart.js          # Chart rendering
-└── config.js            # Configuration file
+```text
+dashboard.html            # Main dashboard entry page
+dashboards/               # Individual dashboard views
+data-source/              # Data source page, calendar, and tables
+Home/                     # Home page and homepage news module
+News/                     # News page and news module
+About/                    # About page
+NavBar/                   # Navigation template and loader
+shared/                   # Shared routes, services, and server handlers
+APIcaller.js              # Shared booking/client data entrypoints
+drawChart.js              # Chart rendering
+server.js                 # Express dev server with clean routes
+api/                      # Serverless API handlers
 ```
 
 ## Security Note
 
-Never commit your API keys to version control. Always use environment variables via the `.env` file (which is excluded from git).
+Never commit API keys to version control. Keep `GEMINI_API_KEY` and `NEWS_API_KEY` in `.env`, which is already ignored by git.
 
 ## License
 

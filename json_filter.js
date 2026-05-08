@@ -101,12 +101,12 @@ async function getAvailableBookingYears() {
     try {
         const bookingData = await fetchBookingsRequest();
         
-        if (!bookingData?.payload?.length) {
+        if (!Array.isArray(bookingData) || bookingData.length === 0) {
             throw new Error("Invalid booking data structure");
         }
         
-        const bookingFilter = new JSONFilter(bookingData.payload);
-        const keyName = bookingData.payload[0].arrivalDay !== undefined ? 'arrivalDay' : 'Arrival Day';
+        const bookingFilter = new JSONFilter(bookingData);
+        const keyName = bookingData[0].arrivalDay !== undefined ? 'arrivalDay' : 'Arrival Day';
         
         // Use the new method to get unique years
         const years = bookingFilter.getUniqueTransformedValues(

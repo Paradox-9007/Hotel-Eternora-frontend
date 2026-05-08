@@ -180,7 +180,8 @@
   100% { transform: rotate(360deg); }
 }
   </style>
-</head>
+    <link rel="icon" type="image/png" href="../../assets/favicon.png">
+  </head>
 <body>
   <h4>Arrivals and Departure for Today</h4>
   <div class="dashboard-container">
@@ -209,8 +210,9 @@
                 </tbody>
             </table>
         </div>
-        <div class="side-middle rect-db3">
-            <input type="date" id="date-picker" class="form-control">
+        <div class="side-middle rect-db3" style="display:flex; flex-direction:column; padding:10px;">
+            <input type="date" id="date-picker" class="form-control" style="margin-bottom:10px; padding: 5px;">
+            <div id="heatmap-calendar" style="display:grid; grid-template-columns:repeat(7, 1fr); gap:2px; width:100%;"></div>
         </div>
       </div>
     </div>
@@ -328,6 +330,7 @@
     });
   });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script type="module">
 import { drawGroupedBarChart, drawPieChart, drawDonutChart } from '../drawChart.js';
 import { fetchClientRequest, fetchBookingsRequest } from '../APIcaller.js'
@@ -348,7 +351,6 @@ document.getElementById('D3-input-container').style.display = 'none';
 
 document.getElementById('D3-generate-ai-report-button').addEventListener('click', () => {
     updateAIAnalysis();
-    document.getElementById('D3-input-container').style.display = 'block';
     document.getElementById('db3-ai-container').style.display = 'block';
     document.getElementById('D3-generate-ai-report-button').style.display = 'none';
 });
@@ -371,12 +373,15 @@ async function updateAIAnalysis() {
     inputTaker.style.display = 'none';
 
     // Show loading state
-    aiAnalysisElement.innerHTML = `
-        <div class="loading-container">
-            <div class="loading-spinner"></div>
-            <p class="loading-text">Generating</p>
-        </div>
-    `;
+// Show loading state
+aiAnalysisElement.innerHTML = `
+<div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">
+        Generating AI insights...
+    </p>
+</div>
+`;
 
     // Define the default prompt
     const defaultPrompt = `Generate analytic reports on:
@@ -422,12 +427,15 @@ async function updateAIAnalysis() {
     } catch (error) {
         console.error(`Failed:`, error);
        
-        aiAnalysisElement.innerHTML = `
-            <div class="loading-container">
-                <div class="loading-spinner"></div>
-                <p class="loading-text">Generating</p>
-            </div>
-        `;
+// Show loading state
+aiAnalysisElement.innerHTML = `
+<div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">
+        Generating AI insights...
+    </p>
+</div>
+`;
         inputTaker.style.display = 'none';
     }
 }
@@ -471,7 +479,7 @@ const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 const Arrival_Depature_Color = ["#009E73", "#0072B2", "#80FFDB", "#A3D8F4"];
 
 function getCurrentDate() {
-    const today = new Date();
+    const today = new Date('2025-03-27T12:00:00');
     return {
         day: today.getDate(),
         month: today.getMonth(),
@@ -483,7 +491,7 @@ const bookingsForDay = getBookingsForDay(currentDate);
 populateBookingTable(bookingsForDay);
 // Set the date picker to the current date
 const datePicker = document.getElementById('date-picker');
-const today = new Date();
+const today = new Date('2025-03-27T12:00:00');
 datePicker.value = today.toISOString().split('T')[0];
 
 // Get references to KPI elements
@@ -494,6 +502,7 @@ const departure_percent = document.getElementById('departure_percent');
 
 // Function to update charts based on selected date
 function updateCharts(selectedDate) {
+    renderHeatmap(selectedDate);
     const currentDate = getCurrentDate();
     const isToday = selectedDate.day === currentDate.day && selectedDate.month === currentDate.month && selectedDate.year === currentDate.year;
     const datata = generateHourlyBookingData(selectedDate);
@@ -568,6 +577,71 @@ datePicker.addEventListener('change', (event) => {
     const bookingsForDay = getBookingsForDay(dateObj);
     populateBookingTable(bookingsForDay);
 });
+
+function renderHeatmap(selectedDate) {
+    const heatmapContainer = document.getElementById('heatmap-calendar');
+    if (!heatmapContainer) return;
+    heatmapContainer.innerHTML = '';
+    const daysInMonth = new Date(selectedDate.year, selectedDate.month + 1, 0).getDate();
+    
+    const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    days.forEach(d => {
+        const el = document.createElement('div');
+        el.textContent = d;
+        el.style.textAlign = 'center';
+        el.style.fontSize = '11px';
+        el.style.fontWeight = 'bold';
+        el.style.color = '#555';
+        heatmapContainer.appendChild(el);
+    });
+
+    const firstDay = new Date(selectedDate.year, selectedDate.month, 1).getDay();
+    for (let i = 0; i < firstDay; i++) {
+        heatmapContainer.appendChild(document.createElement('div'));
+    }
+
+    let maxBookings = 0;
+    const dailyBookings = [];
+    for (let i = 1; i <= daysInMonth; i++) {
+        const bookings = getBookingsForDay({day: i, month: selectedDate.month, year: selectedDate.year});
+        const total = bookings.length;
+        if (total > maxBookings) maxBookings = total;
+        dailyBookings.push(total);
+    }
+
+    for (let i = 1; i <= daysInMonth; i++) {
+        const total = dailyBookings[i-1];
+        const el = document.createElement('div');
+        el.textContent = i;
+        el.style.textAlign = 'center';
+        el.style.fontSize = '12px';
+        el.style.padding = '4px 0';
+        el.style.cursor = 'pointer';
+        el.style.borderRadius = '3px';
+        
+        const intensity = maxBookings > 0 ? total / maxBookings : 0;
+        if (total === 0) {
+            el.style.backgroundColor = '#f8f9fa';
+            el.style.color = '#ccc';
+        } else {
+            el.style.backgroundColor = `rgba(0, 158, 115, ${0.2 + intensity * 0.8})`;
+            el.style.color = intensity > 0.4 ? 'white' : 'black';
+        }
+        
+        if (i === selectedDate.day) {
+            el.style.border = '2px solid #333';
+        } else {
+            el.style.border = '2px solid transparent';
+        }
+
+        el.addEventListener('click', () => {
+            const newDateStr = `${selectedDate.year}-${String(selectedDate.month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            document.getElementById('date-picker').value = newDateStr;
+            document.getElementById('date-picker').dispatchEvent(new Event('change'));
+        });
+        heatmapContainer.appendChild(el);
+    }
+}
 
 // Initial chart setup for current date
 function initializeCharts() {
@@ -646,4 +720,19 @@ function populateBookingTable(bookings) {
 }
 // Initialize charts when the page loads
 initializeCharts();
+
+// Restore AI State
+setTimeout(() => {
+  const savedAi = localStorage.getItem('ai_result_D3-ai-analysis');
+  if (savedAi) {
+    const aiContainer = document.getElementById('db3-ai-container');
+    if (aiContainer) aiContainer.style.display = 'block';
+    const aiOutput = document.getElementById('D3-ai-analysis');
+    if (aiOutput) aiOutput.innerHTML = savedAi;
+    const inputContainer = document.getElementById('D3-input-container');
+    if (inputContainer) inputContainer.style.display = 'flex';
+    const btn = document.getElementById('D3-generate-ai-report-button');
+    if (btn) btn.style.display = 'none';
+  }
+}, 500);
 </script>

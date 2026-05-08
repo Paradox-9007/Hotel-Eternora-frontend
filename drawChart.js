@@ -1,3 +1,8 @@
+if (window.Chart) {
+  Chart.defaults.responsive = true;
+  Chart.defaults.maintainAspectRatio = false;
+}
+
 function drawPieChart(
   chartId,
   labels,

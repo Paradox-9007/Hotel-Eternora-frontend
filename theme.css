@@ -1,4 +1,17 @@
 :root {
+  /* Fonts */
+  @font-face {
+    font-family: 'Lovelace';
+    src: url('/Lovelace/Zetafonts - Lovelace Text Regular.otf') format('opentype');
+    font-weight: normal;
+  }
+  @font-face {
+    font-family: 'Lovelace';
+    src: url('/Lovelace/Zetafonts - Lovelace Text Bold Italic.otf') format('opentype');
+    font-weight: bold;
+    font-style: italic;
+  }
+
   /* Light mode colors */
   --bg-primary: #FEFCFF;
   --bg-secondary: #e2e6ea;

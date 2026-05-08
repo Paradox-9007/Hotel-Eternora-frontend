@@ -4,8 +4,32 @@
   "devCommand": "node server.js",
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "/api/$1.js"
+      "source": "/",
+      "destination": "/Home/Home.html"
+    },
+    {
+      "source": "/home",
+      "destination": "/Home/Home.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/dashboard.html"
+    },
+    {
+      "source": "/data-source",
+      "destination": "/data-source/data-source.html"
+    },
+    {
+      "source": "/news",
+      "destination": "/News/news.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/About/about.html"
+    },
+    {
+      "source": "/api/news/:category",
+      "destination": "/api/news?category=:category"
     }
   ]
 }

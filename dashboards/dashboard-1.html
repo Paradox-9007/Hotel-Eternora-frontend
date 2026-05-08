@@ -108,7 +108,8 @@
   100% { transform: rotate(360deg); }
 }
   </style>
-</head>
+    <link rel="icon" type="image/png" href="../../assets/favicon.png">
+  </head>
 <body>
   <h4 class="db1-heading">Number and Percentage of booking arrivals</h4>
   <div class="db1-dashboard-container">
@@ -144,7 +145,7 @@
     </div>
   </div>
  
-  <div style="margin-top: 20px; text-align: center;">
+  <div style="margin: 12px auto; text-align: center;">
       <button id="D1-generate-ai-report-button" style="padding: 10px 20px; border-radius: 5px; background-color: var(--card-bg); color: white; border: none; cursor: pointer;">Generate AI Report</button>
   </div>
     <div id="db1-ai-container" class="db1-rect">
@@ -218,7 +219,7 @@
       });
     });
   </script>
- 
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script type="module">
     import { drawBarChart, drawPieChart } from '../drawChart.js';
     import { fetchClientRequest, fetchBookingsRequest } from '../APIcaller.js'
@@ -240,7 +241,6 @@ document.getElementById('D1-input-container').style.display = 'none';
 
 document.getElementById('D1-generate-ai-report-button').addEventListener('click', () => {
     updateAIAnalysis();
-    document.getElementById('D1-input-container').style.display = 'block';
     document.getElementById('db1-ai-container').style.display = 'block';
     document.getElementById('D1-generate-ai-report-button').style.display = 'none';
 });
@@ -264,12 +264,15 @@ async function updateAIAnalysis() {
     inputTaker.style.display = 'none';
  
     // Show loading state
-    aiAnalysisElement.innerHTML = `
-        <div class="loading-container">
-            <div class="loading-spinner"></div>
-            <p class="loading-text">Generating</p>
-        </div>
-    `;
+// Show loading state
+aiAnalysisElement.innerHTML = `
+<div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">
+        Generating AI insights...
+    </p>
+</div>
+`;
  
     // Define the default prompt
     const defaultPrompt = `Generate analytic reports on:
@@ -315,12 +318,15 @@ async function updateAIAnalysis() {
     } catch (error) {
         console.error(`Failed:`, error);
        
-        aiAnalysisElement.innerHTML = `
-        <div class="loading-container">
-            <div class="loading-spinner"></div>
-            <p class="loading-text">Generating</p>
-        </div>
-    `;
+// Show loading state
+aiAnalysisElement.innerHTML = `
+<div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">
+        Generating AI insights...
+    </p>
+</div>
+`;
         retryButton.style.display = 'block';
         inputTaker.style.display = 'flex';
     }
@@ -702,4 +708,19 @@ populateMonthDropdown();
 // Set the chart for the current month and year by default
 updateChartForMonth(currentYear, currentMonth);
  
+
+// Restore AI State
+setTimeout(() => {
+  const savedAi = localStorage.getItem('ai_result_D1-ai-analysis');
+  if (savedAi) {
+    const aiContainer = document.getElementById('db1-ai-container');
+    if (aiContainer) aiContainer.style.display = 'block';
+    const aiOutput = document.getElementById('D1-ai-analysis');
+    if (aiOutput) aiOutput.innerHTML = savedAi;
+    const inputContainer = document.getElementById('D1-input-container');
+    if (inputContainer) inputContainer.style.display = 'flex';
+    const btn = document.getElementById('D1-generate-ai-report-button');
+    if (btn) btn.style.display = 'none';
+  }
+}, 500);
 </script>

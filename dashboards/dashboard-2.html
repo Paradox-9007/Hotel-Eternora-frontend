@@ -24,31 +24,43 @@
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    align-items: center;
+    align-items: stretch;
     height: max-content;
     margin: 0;
+    flex-wrap: wrap;
 }
 
 .db2-kpi {
     flex: 1;
     height: 100%;
     margin: 5px;
-    padding: 10px; /* Reduce padding for a more compact look */
-    border-radius: 8px; /* Slightly less rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Reduce shadow for less depth */
+    padding: 15px; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
     text-align: center;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex; /* Use flexbox for alignment */
+    display: flex; 
     flex-direction: column;
-    align-items: center; /* Center items vertically */
-    justify-content: center; /* Center items horizontally */
+    align-items: center; 
+    justify-content: center; 
     margin: 20px 10px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 247, 251, 0.95));
+}
+
+.db2-kpi h5 {
+    margin: 0;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.82rem;
 }
 
 .db2-kpi p{
     text-align: center;
-    color: #272727;
-    font-size: 14px; /* Increase font size slightly for better readability */
+    color: #2c3e50;
+    font-size: clamp(1.1rem, 1.5vw, 1.5rem);
+    line-height: 1.1;
+    margin: 8px 0 0 0;
 }
     
     .db2-bottom-section {
@@ -109,7 +121,8 @@
   100% { transform: rotate(360deg); }
 }
   </style>
-</head>
+    <link rel="icon" type="image/png" href="../../assets/favicon.png">
+  </head>
 <body>
     <h4 class="db2-heading">Comparison of Member vs General Guest arrival bookings</h4>
   <div class="db2-dashboard-container">
@@ -222,6 +235,7 @@
       });
     });
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
     import { drawGroupedBarChart, drawMultiLineChart, drawDonutChart } from '../drawChart.js';
     import { fetchClientRequest, fetchBookingsRequest } from '../APIcaller.js'
@@ -243,7 +257,6 @@ document.getElementById('D2-input-container').style.display = 'none';
 
 document.getElementById('D2-generate-ai-report-button').addEventListener('click', () => {
     updateAIAnalysis();
-    document.getElementById('D2-input-container').style.display = 'block';
     document.getElementById('db2-ai-container').style.display = 'block';
     document.getElementById('D2-generate-ai-report-button').style.display = 'none';
 });
@@ -266,12 +279,15 @@ async function updateAIAnalysis() {
     inputTaker.style.display = 'none';
 
     // Show loading state
-    aiAnalysisElement.innerHTML = `
-        <div class="loading-container">
-            <div class="loading-spinner"></div>
-            <p class="loading-text">Generating</p>
-        </div>
-    `;
+// Show loading state
+aiAnalysisElement.innerHTML = `
+<div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">
+        Generating AI insights...
+    </p>
+</div>
+`;
 
     // Define the default prompt
     const defaultPrompt = `Generate analytic reports on:
@@ -317,12 +333,15 @@ async function updateAIAnalysis() {
     } catch (error) {
         console.error(`Failed:`, error);
        
-        aiAnalysisElement.innerHTML = `
-            <div class="loading-container">
-                <div class="loading-spinner"></div>
-                <p class="loading-text">Generating</p>
-            </div>
-        `;
+// Show loading state
+aiAnalysisElement.innerHTML = `
+<div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">
+        Generating AI insights...
+    </p>
+</div>
+`;
         inputTaker.style.display = 'none';
     }
 }
@@ -454,18 +473,18 @@ function updateKPIs(datasets) {
 
     // Update KPI displays
     kpiOne.innerHTML = `
-        <p>Total General Guests : </p>
+        <h5>Total General Guests</h5>
         <p>${totalGeneral}</p>
     `;
     
     kpiTwo.innerHTML = `
-        <p>Total Members :</p>
+        <h5>Total Members</h5>
         <p>${totalMembers}</p>
     `;
     
     kpiThree.innerHTML = `
-        <p>Member to Guest Ratio: </p>
-        <p>${memberRatio}% of bookings is from member.</p>
+        <h5>Member Ratio</h5>
+        <p>${memberRatio}%</p>
     `;
 }
 
@@ -484,18 +503,18 @@ function updateProfitChart(year, month = null) {
     const kpiSix = document.getElementById("db2-kpi-six");
 
     kpiFour.innerHTML = `
-        <p>Total Member Profits</p>
+        <h5>Total Member Profits</h5>
         <p>$${totalMemberProfit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</p>
     `;
     
     kpiFive.innerHTML = `
-        <p>Total General Guest Profits</p>
+        <h5>Total Guest Profits</h5>
         <p>$${totalGeneralProfit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</p>
     `;
 
     kpiSix.innerHTML = `
-        <p>Revenue Ratio: </p>
-        <p>Members generate ${((totalMemberProfit / totalProfit) * 100).toFixed(2)}% of the total revenue ($${totalProfit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}).</p>
+        <h5>Member Revenue Ratio</h5>
+        <p>${((totalMemberProfit / totalProfit) * 100).toFixed(2)}%</p>
     `;
     updateKpiForAi('4', `Total Member Profits - $${totalMemberProfit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}, Total General Guest Profits - $${totalGeneralProfit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}, Revenue Ratio - ${((totalMemberProfit / totalProfit) * 100).toFixed(2)}% of the total revenue ($${totalProfit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })})`);
 
@@ -578,4 +597,19 @@ handleDropdown();
 populateMonthDropdown();
 // Set the chart for the current month and year by default
 updateChartForMonth(currentYear, currentMonth);
+
+// Restore AI State
+setTimeout(() => {
+  const savedAi = localStorage.getItem('ai_result_D2-ai-analysis');
+  if (savedAi) {
+    const aiContainer = document.getElementById('db2-ai-container');
+    if (aiContainer) aiContainer.style.display = 'block';
+    const aiOutput = document.getElementById('D2-ai-analysis');
+    if (aiOutput) aiOutput.innerHTML = savedAi;
+    const inputContainer = document.getElementById('D2-input-container');
+    if (inputContainer) inputContainer.style.display = 'flex';
+    const btn = document.getElementById('D2-generate-ai-report-button');
+    if (btn) btn.style.display = 'none';
+  }
+}, 500);
 </script>

@@ -58,7 +58,7 @@
     }
     .db7-top-tile h4 {
         font-size: 14px;
-        color: #6c757d;
+        color: #6c757d !important;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         margin-bottom: 5px;
@@ -66,11 +66,17 @@
     }
 
     .db7-top-tile p {
-        font-size: 18px;
+        font-size: 24px;
         font-weight: bold;
         color: #2c3e50;
         text-align: center;
-        margin: 0;
+        margin: 5px 0 0 0;
+    }
+
+    .db7-top-tile small {
+        font-size: 12px;
+        color: #888;
+        margin-top: 5px;
     }
 
     #db7-ai-container {
@@ -115,7 +121,8 @@
   100% { transform: rotate(360deg); }
 }
   </style>
-</head>
+    <link rel="icon" type="image/png" href="../../assets/favicon.png">
+  </head>
 <body>
   <h4 class="db7-heading">Booking Status Analytics</h4>
   <div class="db7-dashboard-container">
@@ -222,6 +229,7 @@
       });
     });
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
     import { drawStackedBarChart,drawPieChart } from '../drawChart.js';
     import { fetchClientRequest, fetchBookingsRequest } from '../APIcaller.js'
@@ -243,7 +251,6 @@ document.getElementById('D7-input-container').style.display = 'none';
 
 document.getElementById('D7-generate-ai-report-button').addEventListener('click', () => {
     updateAIAnalysis();
-    document.getElementById('D7-input-container').style.display = 'block';
     document.getElementById('db7-ai-container').style.display = 'block';
     document.getElementById('D7-generate-ai-report-button').style.display = 'none';
 });
@@ -267,12 +274,15 @@ async function updateAIAnalysis() {
     inputTaker.style.display = 'none';
 
     // Show loading state
-    aiAnalysisElement.innerHTML = `
-        <div class="loading-container">
-            <div class="loading-spinner"></div>
-            <p class="loading-text">Generating</p>
-        </div>
-    `;
+// Show loading state
+aiAnalysisElement.innerHTML = `
+<div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">
+        Generating AI insights...
+    </p>
+</div>
+`;
 
     // Define the default prompt
     const defaultPrompt = `Generate analytic reports on:
@@ -318,12 +328,15 @@ async function updateAIAnalysis() {
     } catch (error) {
         console.error(`Failed:`, error);
        
-        aiAnalysisElement.innerHTML = `
-            <div class="loading-container">
-                <div class="loading-spinner"></div>
-                <p class="loading-text">Generating</p>
-            </div>
-        `;
+// Show loading state
+aiAnalysisElement.innerHTML = `
+<div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">
+        Generating AI insights...
+    </p>
+</div>
+`;
         inputTaker.style.display = 'none';
     }
 }
@@ -522,27 +535,35 @@ function updateCharts(year = currentYear, month = currentMonth) {
     }, 0);
 
     // Update KPIs
-    document.getElementById('Canceled').textContent = 
-        `Cancelled Bookings: ${pieChartData.labels.reduce((sum, label, index) => {
+    document.getElementById('Canceled').innerHTML = 
+        `<h4>Cancelled Bookings</h4>
+        <p>${pieChartData.labels.reduce((sum, label, index) => {
             if (['X'].includes(label)) {
                 return sum + pieChartData.data[index];
             }
             return sum;
-        }, 0).toLocaleString()} (${periodLabel})`;
-    document.getElementById('Pending').textContent = 
-        `Provisional Bookings: ${pieChartData.labels.reduce((sum, label, index) => {
+        }, 0).toLocaleString()}</p>
+        <small>${periodLabel}</small>`;
+        
+    document.getElementById('Pending').innerHTML = 
+        `<h4>Provisional Bookings</h4>
+        <p>${pieChartData.labels.reduce((sum, label, index) => {
             if (['Q', 'W', 'I', 'P'].includes(label)) {
                 return sum + pieChartData.data[index];
             }
             return sum;
-        }, 0).toLocaleString()}`;
-    document.getElementById('Accpeted').textContent = 
-        `Accepted Bookings: ${pieChartData.labels.reduce((sum, label, index) => {
+        }, 0).toLocaleString()}</p>
+        <small>${periodLabel}</small>`;
+        
+    document.getElementById('Accpeted').innerHTML = 
+        `<h4>Accepted Bookings</h4>
+        <p>${pieChartData.labels.reduce((sum, label, index) => {
             if (['C', 'D', 'U', 'A'].includes(label)) {
                 return sum + pieChartData.data[index];
             }
             return sum;
-        }, 0).toLocaleString()}`;
+        }, 0).toLocaleString()}</p>
+        <small>${periodLabel}</small>`;
 
     // Draw the charts
     const pieChartDataWithColors = {
@@ -577,4 +598,19 @@ populateMonthDropdown();
 // Set the charts for the current month and year by default
 updateCharts(currentYear, currentMonth);
 
+
+// Restore AI State
+setTimeout(() => {
+  const savedAi = localStorage.getItem('ai_result_D7-ai-analysis');
+  if (savedAi) {
+    const aiContainer = document.getElementById('db7-ai-container');
+    if (aiContainer) aiContainer.style.display = 'block';
+    const aiOutput = document.getElementById('D7-ai-analysis');
+    if (aiOutput) aiOutput.innerHTML = savedAi;
+    const inputContainer = document.getElementById('D7-input-container');
+    if (inputContainer) inputContainer.style.display = 'flex';
+    const btn = document.getElementById('D7-generate-ai-report-button');
+    if (btn) btn.style.display = 'none';
+  }
+}, 500);
 </script>

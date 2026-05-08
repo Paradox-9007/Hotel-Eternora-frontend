@@ -3,82 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Enhanced Calendar Carousel</title>
+    <title>Data Source</title>
 
-    <!-- jQuery (must come first since DataTables depends on it) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon.png">
+    <link rel="icon" type="image/png" href="../../assets/favicon.png">
 
-    <!-- Bootstrap CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
 
-    <!-- DataTables CSS -->
     <link
       rel="stylesheet"
       type="text/css"
       href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css"
     />
-
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
-
-
-    <!-- DataTables JS -->
-    <script
-      type="text/javascript"
-      charset="utf8"
-      src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"
-    ></script>
-
-    <!-- DataTables Buttons extension -->
     <link
       rel="stylesheet"
       type="text/css"
       href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css"
     />
-    <script
-      type="text/javascript"
-      src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"
-    ></script>
 
-    <!-- JSZip for Excel export -->
-    <script
-      type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"
-    ></script>
-
-    <!-- PDFMake for PDF export -->
-    <script
-      type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"
-    ></script>
-
-    <!-- Font Awesome CSS -->
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
 
-    <!-- Custom CSS -->
-    <link href="calendar.css" rel="stylesheet" />
-    <link href="tables.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../theme.css" />
-
+    <link href="/data-source/calendar.css" rel="stylesheet" />
+    <link href="/data-source/tables.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/theme.css" />
     <style>
+      body {
+        background-color: #f4f6f9;
+        font-family: "Lora", serif;
+      }
+
       .scroll-top {
         position: fixed;
         bottom: 20px;
@@ -107,256 +70,141 @@
         background-color: var(--accent-hover);
         transform: translateY(-3px);
       }
-
-      :root {
-        --month-bg: var(-btn-bg);
-        --today-bg: #78b3ce;
-        --day-bg: #cdf7ba;
-        --today-border: #107800;
-        --header-bg: var(--card-bg);
-        --header-color: #ffffff;
-        --weekend-bg: #ffcce1;
-        --weekend-color: #e74c3c;
-        --button-bg: #a9b5df;
-        --button-hover-bg: #2980b9;
-        --button-text-color: #ffffff;
-        --t-header-bg: #f5f5f5;
-        --t-header-color: #333333;
-        --row-odd-bg: #f9f9f9;
-        --row-even-bg: #ffffff;
-        --row-hover-bg: #000000;
-        --row-hover-color: #ffffff;
-        --table-border-color: #ddd;
-      }
-
-      body {
-        background-color: #f4f6f9;
-        font-family: "Arial", sans-serif;
-      }
-
-      .search-container {
-        display: flex;
-        justify-content: flex-end;
-      }
-
-      .form-control {
-        width: auto !important;
-      }
-
-      .input-group {
-        display: flex;
-        justify-content: flex-end;
-        flex-direction: row;
-        flex-wrap: nowrap;
-      }
-
-      .form-control {
-        min-width: 40% !important;
-        max-width: 50%;
-        font-size: 12px;
-        padding: 0;
-        margin-left: 12px !important;
-        border: #000000 1px solid;
-      }
-
-      #booking-table-search:focus,
-      #client-table-search:focus {
-        outline: none;
-        box-shadow: none;
-        border: #000000 1px solid;
-      }
-
-      table.dataTable thead .sorting,
-      table.dataTable thead .sorting_asc {
-        background-position: top left;
-      }
-
-      label {
-        display: none;
-      }
-
-      .active-filters-container {
-        margin-bottom: 10px;
-      }
-
-      .badge {
-        padding: 5px 10px;
-        margin-right: 5px;
-        display: inline-flex;
-        align-items: center;
-        background-color: #17a2b8;
-        color: white;
-        font-size: 0.875rem;
-      }
-
-      .filter-modal {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .filter-remove {
-        cursor: pointer;
-        margin-left: 5px;
-      }
-
-      .filter-remove:hover {
-        color: #fff;
-        font-weight: bold;
-      }
-       /* Add these responsive styles for calendar controls */
-       @media (max-width: 1024px) {
-        .calendar-controls {
-          padding: 15px;
-          flex-wrap: wrap;
-          gap: 10px;
-        }
-        
-        #yearspace, #monthspace, #countryspace {
-          flex: 0 0 48%;
-        }
-        
-        .form-select {
-          font-size: 14px;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .calendar-controls {
-          flex-direction: column;
-          align-items: stretch;
-          padding: 10px;
-        }
-
-        #yearspace, #monthspace, #countryspace {
-          flex: 0 0 100%;
-          margin-bottom: 10px;
-        }
-
-        .form-select {
-          width: 100% !important;
-          font-size: 14px;
-        }
-
-        label {
-          display: inline-block;
-          min-width: 100px;
-        }
-      }
     </style>
   </head>
   <body>
-    <!-- Navbar -->
     <div id="navbar-placeholder"></div>
 
-    <!-- Include nav.js for navbar functionality -->
-    <script src="../NavBar/nav.js"></script>
+    <script src="/NavBar/nav.js"></script>
 
-    <div class="container mt-4 mb-4">
-      <div
-        class="calendar-controls mb-3 d-flex justify-content-between align-items-center"
-        "
-      >
-        <div id="yearspace" class="d-flex align-items-center">
-          <label for="year-select" class="me-2" style="font-family: 'Lora', serif;">Select Year:</label>
-          <select
-            id="year-select"
-            class="form-select d-inline-block w-auto me-2"
-          >
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-            <option value="2026">2026</option>
-          </select>
-        </div>
-        <div id="monthspace" class="d-flex align-items-center">
-          <label for="month-select" class="me-2" style="font-family: 'Lora', serif;">Select Month:</label>
-          <select
-            id="month-select"
-            class="form-select d-inline-block w-auto me-2"
-          >
-            <option value="1">January</option>
-            <option value="2">February</option>
-            <option value="3">March</option>
-            <option value="4">April</option>
-            <option value="5">May</option>
-            <option value="6">June</option>
-            <option value="7">July</option>
-            <option value="8">August</option>
-            <option value="9">September</option>
-            <option value="10">October</option>
-            <option value="11">November</option>
-            <option value="12">December</option>
-          </select>
-        </div>
-        <div id="countryspace" class="d-flex align-items-center">
-          <label for="country-select" class="me-2" style="font-family: 'Lora', serif;">Select Country:</label>
-          <select
-            id="country-select"
-            class="form-select d-inline-block w-auto me-2"
-          >
-            <option value="Thailand">Thailand</option>
-            <option value="Myanmar">Myanmar</option>
-            <option value="Indonesia">Indonesia</option>
-            <option value="Singapore">Singapore</option>
-            <option value="Malaysia">Malaysia</option>
-            <option value="Taiwan">Taiwan</option>
-          </select>
-        </div>
-      </div>
-
-      <div id="fullcalendartext">
-        <h4 class="text-center mb-3" style="font-family: 'Lora', serif;">Full Year Calendar</h4>
-      </div>
-
-      <div id="calendar" class="calendar-container">
-        <div id="carouselExample" class="carousel slide" data-bs-ride="false">
-          <div class="carousel-inner" id="calendar-carousel">
-            <!-- Dynamic months will be inserted here -->
+    <div class="container mt-4 mb-4 data-source-page">
+      <section class="calendar-shell">
+        <div class="calendar-controls">
+          <div id="yearspace" class="control-group">
+            <label for="year-select">Select Year</label>
+            <select id="year-select" class="form-select">
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+              <option value="2029">2029</option>
+              <option value="2030">2030</option>
+            </select>
           </div>
-          <button
-            class="carousel-control-prev"
-            type="button"
-            data-bs-target="#carouselExample"
-            data-bs-slide="prev"
-          >
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button
-            class="carousel-control-next"
-            type="button"
-            data-bs-target="#carouselExample"
-            data-bs-slide="next"
-          >
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
+
+          <div id="monthspace" class="control-group">
+            <label for="month-select">Select Month</label>
+            <select id="month-select" class="form-select">
+              <option value="1">January</option>
+              <option value="2">February</option>
+              <option value="3">March</option>
+              <option value="4">April</option>
+              <option value="5">May</option>
+              <option value="6">June</option>
+              <option value="7">July</option>
+              <option value="8">August</option>
+              <option value="9">September</option>
+              <option value="10">October</option>
+              <option value="11">November</option>
+              <option value="12">December</option>
+            </select>
+          </div>
+
+          <div id="countryspace" class="control-group">
+            <label for="country-select">Select Country</label>
+            <select id="country-select" class="form-select">
+              <option value="Thailand">Thailand</option>
+              <option value="Myanmar">Myanmar</option>
+              <option value="Indonesia">Indonesia</option>
+              <option value="Singapore">Singapore</option>
+              <option value="Malaysia">Malaysia</option>
+              <option value="Taiwan">Taiwan</option>
+            </select>
+          </div>
+
+          <div class="calendar-action-wrap">
+            <button id="calendar-today-btn" class="btn calendar-action-btn" type="button">
+              Current Month
+            </button>
+          </div>
         </div>
-      </div>
 
-      <h4 class="text-left mt-5 mb-3" style="font-family: 'Lora', serif;">Booking Data</h4>
-      <div id="booking-table"></div>
-      <div id="booking_down"></div>
 
-      <h4 class="text-left mt-5 mb-3" style="font-family: 'Lora', serif;">Client Data</h4>
-      <div id="client-table"></div>
-      <div id="client_down"></div>
+
+
+        <div id="fullcalendartext" class="calendar-heading-block">
+          <h4 class="text-center mb-2">Full Year Calendar</h4>
+          <p class="text-center mb-0">
+            Holiday planning reference for Hotel Eternora destination markets.
+          </p>
+        </div>
+
+        <div id="calendar" class="calendar-container">
+          <div id="carouselExample" class="carousel slide" data-bs-ride="false">
+            <div class="carousel-inner" id="calendar-carousel"></div>
+            <button
+              class="carousel-control-prev"
+              type="button"
+              data-bs-target="#carouselExample"
+              data-bs-slide="prev"
+            >
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button
+              class="carousel-control-next"
+              type="button"
+              data-bs-target="#carouselExample"
+              data-bs-slide="next"
+            >
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="table-section">
+        <div class="table-section-header">
+          <div>
+            <h4 class="text-left mt-5 mb-2">Booking Data</h4>
+          </div>
+          <div id="booking-table-summary" class="table-section-summary"></div>
+        </div>
+        <div id="booking-table"></div>
+        <div id="booking_down"></div>
+      </section>
+
+      <section class="table-section">
+        <div class="table-section-header">
+          <div>
+            <h4 class="text-left mt-5 mb-2">Client Data</h4>
+          </div>
+          <div id="client-table-summary" class="table-section-summary"></div>
+        </div>
+        <div id="client-table"></div>
+        <div id="client_down"></div>
+      </section>
     </div>
 
-    <!-- Luxon for date handling -->
     <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
-
-    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="/data-source/calendar.js"></script>
+    <script src="/data-source/tables.js" type="module"></script>
 
-    <!-- Custom JS files -->
-    <script src="calendar.js"></script>
-    <script src="tables.js" type="module"></script>
-    <!-- Scroll to top button -->
     <a class="scroll-top" title="Back to Top">
-      <i class="fa fa-angle-up" aria-hidden="true" style="font-size:24px" ></i>
+      <i class="fa fa-angle-up" aria-hidden="true" style="font-size: 24px"></i>
     </a>
 
     <script>
-      // Scroll to top functionality
       const scrollTopBtn = document.querySelector(".scroll-top");
 
       window.addEventListener("scroll", () => {

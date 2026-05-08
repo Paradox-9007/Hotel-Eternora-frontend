@@ -22,6 +22,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      min-height: 120px;
     }
     
     .db4-top-row,
@@ -38,6 +39,7 @@
       display: flex;
       flex-direction: column;
       max-height: 600px;
+      min-height: 420px;
       margin: 10px 0;
     }
     
@@ -84,6 +86,38 @@
       text-align: center;
     }
 
+    .db4-kpi-card {
+      justify-content: center;
+      text-align: center;
+      gap: 8px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 247, 251, 0.95));
+    }
+
+    .db4-kpi-card h5 {
+      margin: 0;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 0.82rem;
+    }
+
+    .db4-kpi-card p {
+      font-size: clamp(1.35rem, 2vw, 2rem);
+      color: #2c3e50;
+      line-height: 1.1;
+    }
+
+    .db4-kpi-card small {
+      display: inline-block;
+      margin-top: 2px;
+      color: #6b7280;
+      font-size: 0.85rem;
+    }
+
+    .db4-filter-card {
+      min-height: 120px;
+    }
+
     #db4-ai-container {
         margin-top: 20px;
         padding: 15px;
@@ -126,7 +160,8 @@
   100% { transform: rotate(360deg); }
 }
   </style>
-</head>
+    <link rel="icon" type="image/png" href="../../assets/favicon.png">
+  </head>
 <body>
   <h4>Occupancy rate and Average Daily Rate calculation</h4>
   <div class="db4-dashboard-container">
@@ -222,7 +257,7 @@
       });
     });
   </script>
- 
+ <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
     import { drawComboChart } from "../drawChart.js";
     import { fetchClientRequest, fetchBookingsRequest } from '../APIcaller.js'
@@ -244,7 +279,6 @@ document.getElementById('D4-input-container').style.display = 'none';
 
 document.getElementById('D4-generate-ai-report-button').addEventListener('click', () => {
     updateAIAnalysis();
-    document.getElementById('D4-input-container').style.display = 'block';
     document.getElementById('db4-ai-container').style.display = 'block';
     document.getElementById('D4-generate-ai-report-button').style.display = 'none';
 });
@@ -267,12 +301,15 @@ async function updateAIAnalysis() {
     inputTaker.style.display = 'none';
 
     // Show loading state
-    aiAnalysisElement.innerHTML = `
-        <div class="loading-container">
-            <div class="loading-spinner"></div>
-            <p class="loading-text">Generating</p>
-        </div>
-    `;
+// Show loading state
+aiAnalysisElement.innerHTML = `
+<div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">
+        Generating AI insights...
+    </p>
+</div>
+`;
 
     // Define the default prompt
     const defaultPrompt = `Generate analytic reports on:
@@ -318,12 +355,15 @@ async function updateAIAnalysis() {
     } catch (error) {
         console.error(`Failed:`, error);
        
-        aiAnalysisElement.innerHTML = `
-            <div class="loading-container">
-                <div class="loading-spinner"></div>
-                <p class="loading-text">Generating</p>
-            </div>
-        `;
+// Show loading state
+aiAnalysisElement.innerHTML = `
+<div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">
+        Generating AI insights...
+    </p>
+</div>
+`;
         inputTaker.style.display = 'none';
     }
 }
@@ -359,12 +399,10 @@ document.getElementById('D4-text-to-speech').addEventListener('click', function(
 });
 // AI END xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-    // const currentDate = new Date();
-    // let currentYear = new Date().getFullYear();
-    // let currentMonth = new Date().getMonth() + 1;
-    let currentYear = 2025;
-    let currentMonth = 3;
-    const currentDate = 28
+    const today = new Date('2025-03-27');
+    let currentYear = today.getFullYear();
+    let currentMonth = today.getMonth() + 1;
+    const currentDate = today.getDate();
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const availableYears = generate_Barchart_dashboard_1_inYears()[0];
 
@@ -512,4 +550,19 @@ handleDropdown();
 updateKPIs(currentMonth, currentYear);
 updateThirdRowKPIs(currentMonth, currentYear);
 
+
+// Restore AI State
+setTimeout(() => {
+  const savedAi = localStorage.getItem('ai_result_D4-ai-analysis');
+  if (savedAi) {
+    const aiContainer = document.getElementById('db4-ai-container');
+    if (aiContainer) aiContainer.style.display = 'block';
+    const aiOutput = document.getElementById('D4-ai-analysis');
+    if (aiOutput) aiOutput.innerHTML = savedAi;
+    const inputContainer = document.getElementById('D4-input-container');
+    if (inputContainer) inputContainer.style.display = 'flex';
+    const btn = document.getElementById('D4-generate-ai-report-button');
+    if (btn) btn.style.display = 'none';
+  }
+}, 500);
 </script>

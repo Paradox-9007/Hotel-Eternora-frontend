@@ -100,7 +100,8 @@
   100% { transform: rotate(360deg); }
 }
   </style>
-</head>
+    <link rel="icon" type="image/png" href="../../assets/favicon.png">
+  </head>
 <body>
     <h4 class="db8-heading">Most frequently Booked Units Analytics</h4>
     <div class="db8-dashboard-container">
@@ -202,7 +203,7 @@
       });
     });
   </script>
- 
+ <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
     import { drawHorizontalBarChart } from '../drawChart.js';
     import { fetchClientRequest, fetchBookingsRequest } from '../APIcaller.js'
@@ -223,7 +224,6 @@ document.getElementById('D8-input-container').style.display = 'none';
 
 document.getElementById('D8-generate-ai-report-button').addEventListener('click', () => {
     updateAIAnalysis();
-    document.getElementById('D8-input-container').style.display = 'block';
     document.getElementById('db8-ai-container').style.display = 'block';
     document.getElementById('D8-generate-ai-report-button').style.display = 'none';
 });
@@ -247,12 +247,15 @@ async function updateAIAnalysis() {
     inputTaker.style.display = 'none';
 
     // Show loading state
-    aiAnalysisElement.innerHTML = `
-        <div class="loading-container">
-            <div class="loading-spinner"></div>
-            <p class="loading-text">Generating</p>
-        </div>
-    `;
+// Show loading state
+aiAnalysisElement.innerHTML = `
+<div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">
+        Generating AI insights...
+    </p>
+</div>
+`;
 
     // Define the default prompt
     const defaultPrompt = `Generate analytic reports on:
@@ -298,12 +301,15 @@ async function updateAIAnalysis() {
     } catch (error) {
         console.error(`Failed:`, error);
        
-        aiAnalysisElement.innerHTML = `
-            <div class="loading-container">
-                <div class="loading-spinner"></div>
-                <p class="loading-text">Generating</p>
-            </div>
-        `;
+// Show loading state
+aiAnalysisElement.innerHTML = `
+<div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">
+        Generating AI insights...
+    </p>
+</div>
+`;
         inputTaker.style.display = 'none';
     }
 }
@@ -507,4 +513,19 @@ populateMonthDropdown();
 updateDashboard(currentYear, currentMonth); // Initial load with current date
 
 
+
+// Restore AI State
+setTimeout(() => {
+  const savedAi = localStorage.getItem('ai_result_D8-ai-analysis');
+  if (savedAi) {
+    const aiContainer = document.getElementById('db8-ai-container');
+    if (aiContainer) aiContainer.style.display = 'block';
+    const aiOutput = document.getElementById('D8-ai-analysis');
+    if (aiOutput) aiOutput.innerHTML = savedAi;
+    const inputContainer = document.getElementById('D8-input-container');
+    if (inputContainer) inputContainer.style.display = 'flex';
+    const btn = document.getElementById('D8-generate-ai-report-button');
+    if (btn) btn.style.display = 'none';
+  }
+}, 500);
 </script>
