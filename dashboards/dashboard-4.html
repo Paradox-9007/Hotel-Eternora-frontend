@@ -188,7 +188,7 @@
   <div style="margin-top: 20px; text-align: center;">
     <button id="D4-generate-ai-report-button" style="padding: 10px 20px; border-radius: 5px; background-color: var(--card-bg); color: white; border: none; cursor: pointer;">Generate AI Report</button>
 </div>
-  <div id="db4-ai-container" class="db4-rect">
+  <div id="db4-ai-container" style="background-color: rgba(246, 247, 251); border: 1px solid var(--border-color); margin: 10px; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
       <div id="D4-ai-analysis" class="ai-analysis"></div>
       <button id="D4-retry-ai-analysis" style="margin-top: 10px;">Try Again</button>
   </div>
@@ -343,7 +343,7 @@ aiAnalysisElement.innerHTML = `
         console.log(`Status:`, status);
 
         if (status === 'success') {
-            inputTaker.style.display = 'flex';
+            inputTaker.style.setProperty('display', 'flex', 'important');
             return;
         } else {
             // Log more detailed error information if available

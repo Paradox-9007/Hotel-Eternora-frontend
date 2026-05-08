@@ -307,7 +307,7 @@ aiAnalysisElement.innerHTML = `
         console.log(`Status:`, status);
  
         if (status === 'success') {
-            inputTaker.style.display = 'flex';
+            inputTaker.style.setProperty('display', 'flex', 'important');
             return;
         } else {
             // Log more detailed error information if available
@@ -328,7 +328,7 @@ aiAnalysisElement.innerHTML = `
 </div>
 `;
         retryButton.style.display = 'block';
-        inputTaker.style.display = 'flex';
+        inputTaker.style.setProperty('display', 'flex', 'important');
     }
 }
  

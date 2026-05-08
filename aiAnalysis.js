@@ -1,5 +1,5 @@
 // Replace this with your actual Render URL after deploying the backend!
-const PROD_BACKEND_URL = "https://your-future-backend-url.onrender.com";
+const PROD_BACKEND_URL = "https://hotel-eternora-backend.onrender.com";
 
 const BACKEND_URL =
   window.location.hostname === "localhost" ||
@@ -175,7 +175,7 @@ ${UserPrompt}
       target.innerHTML =
         this.cache.get(prompt);
 
-      resolve("cached");
+      resolve("success");
 
       return;
     }
