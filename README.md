@@ -9,6 +9,7 @@ This repository is intentionally public.
 - The frontend code, static assets, and dashboard datasets live here.
 - The production AI backend is maintained in a separate private repository.
 - People viewing this repository do not need backend source access to understand or run most of the UI.
+- Public access is read-only for the upstream project: viewers can browse and clone the repository, but only maintainers can push or commit directly to the canonical repository.
 
 Most dashboard views work from the bundled JSON data in `data-source/`. The AI insight panels, however, call a separately hosted backend service.
 
